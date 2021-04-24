@@ -17,18 +17,27 @@ namespace KinematicCharacterController.Bot
         private const string HorizontalInput = "Horizontal";
         private const string VerticalInput = "Vertical";
         bool isActive;
-        public bool canPing; 
+        public bool canPing;
+        public int zoneCount; 
         float rot;
-        public LayerMask cameraLayer; 
+        public LayerMask cameraLayer;
+        public LayerMask worldLayer; 
         private void Start()
         {
-            DisableMove(); 
+            DisableMove();
+            rot = lookTarget.transform.rotation.eulerAngles.y; 
         }
 
         private void Update()
         {
             if (isActive) { HandleCharacterInput(); }
-     
+        if (zoneCount > 0)
+            {
+                canPing = true; 
+            } else
+            {
+                canPing = false;
+            }
         }
 
         private void LateUpdate()
@@ -50,7 +59,7 @@ namespace KinematicCharacterController.Bot
             }
             lookTarget.transform.rotation = Quaternion.Euler(lookTarget.transform.rotation.eulerAngles.x, rot, lookTarget.transform.rotation.eulerAngles.z);
             // Input for zooming the camera (disabled in WebGL because it can cause problems)
-            float scrollInput = -Input.GetAxis(MouseScrollInput);
+            
 #if UNITY_WEBGL
         scrollInput = 0f;
 #endif   
@@ -84,10 +93,20 @@ namespace KinematicCharacterController.Bot
         {
             if (canPing)
             {
-                Collider[] hits = Physics.OverlapSphere(transform.position, 10, cameraLayer);
+                Collider[] hits = Physics.OverlapSphere(Character.transform.position, 10, cameraLayer);
                 foreach (Collider hit in hits)
                 {
-                    hit.GetComponent<CameraBrain>().ToggleTarget(Character.transform);
+                    print("We have Detected " + hit.name); 
+                    RaycastHit lineHit; 
+                    if (Physics.Linecast(hit.transform.position,Character.transform.position,out lineHit, worldLayer))
+                    {
+                        print("Could not ping " + hit.name + ": The " + lineHit.transform.name + "was in the way"); 
+                    } else
+                    {
+                        hit.GetComponent<CameraBrain>().ToggleTarget(Character.transform);
+                        print("Camera: " + hit.gameObject.name + " has been found, and pingged"); 
+                    }
+                  
                 }
             }
         }

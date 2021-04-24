@@ -20,7 +20,7 @@ namespace KinematicCharacterController.Custom
         private void Start()
         {
             EnableMove();
-            Cursor.lockState = CursorLockMode.Locked;
+           
             // Tell camera to follow transform
             CharacterCamera.SetFollowTransform(Character.CameraFollowPoint);
 

@@ -18,7 +18,7 @@ public class CameraBrain : MonoBehaviour
     float zoomValue;
 
     float defaultFOV = 60;
-    float minZoomValue = 20;
+   public float minZoomValue = 20;
     public DG.Tweening.Core.TweenerCore<float, float, DG.Tweening.Plugins.Options.FloatOptions> zoomInTween; 
     // Start is called before the first frame update
     void Start()
@@ -40,7 +40,8 @@ public class CameraBrain : MonoBehaviour
 
         if (followTarget)
         {
-            lookAt.position = followTransform.position;
+            Vector3 followOffset = followTransform.position;
+            lookAt.position = new Vector3(followOffset.x, followOffset.y + 2.5f, followOffset.z); 
             if (IsLookAtStill())
             {
                 
