@@ -17,7 +17,9 @@ namespace KinematicCharacterController.Bot
         private const string HorizontalInput = "Horizontal";
         private const string VerticalInput = "Vertical";
         bool isActive;
-        float rot; 
+        public bool canPing; 
+        float rot;
+        public LayerMask cameraLayer; 
         private void Start()
         {
             DisableMove(); 
@@ -76,6 +78,18 @@ namespace KinematicCharacterController.Bot
         public void DisableMove()
         {
             isActive = false;
+        }
+
+        public void PingCameras()
+        {
+            if (canPing)
+            {
+                Collider[] hits = Physics.OverlapSphere(transform.position, 10, cameraLayer);
+                foreach (Collider hit in hits)
+                {
+                    hit.GetComponent<CameraBrain>().ToggleTarget(Character.transform);
+                }
+            }
         }
     }
 }

@@ -40,7 +40,7 @@ public class PlayerUIController : MonoBehaviour
                     
                 }
          
-                cursor.anchoredPosition = new Vector3(results[results.Count - 1].screenPosition.x, results[results.Count - 1].screenPosition.y);
+             //   cursor.anchoredPosition = new Vector3(results[results.Count - 1].screenPosition.x, results[results.Count - 1].screenPosition.y);
             }
         } 
         if (Input.GetMouseButtonUp(0))
