@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2263045535883436028
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2263045535883436025}
+  - component: {fileID: 2263045535883436030}
+  - component: {fileID: 2263045535883436031}
+  - component: {fileID: 2263045535883436024}
+  m_Layer: 0
+  m_Name: Twitch
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2263045535883436025
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2263045535883436028}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 7.5639305, y: -1.0468206, z: 21.229935}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2263045535883436030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2263045535883436028}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a76623f060a33e049a74c6ff838b3143, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ircAddress: irc.chat.twitch.tv
+  port: 6667
+  twitchDetails:
+    oauth: 
+    nick: 
+    channel: 
+  settings:
+    connectOnStart: 1
+    parseBadges: 1
+    parseTwitchEmotes: 1
+    debugIRC: 1
+  clientChatter:
+    login: 
+    channel: 
+    message: 
+    tags:
+      colorHex: '#FFFFFF'
+      displayName: 
+      badges: []
+      emotes: []
+--- !u!114 &2263045535883436031
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2263045535883436028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 583e418894e173045bdbb85a606442f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _irc: {fileID: 2263045535883436030}
+--- !u!114 &2263045535883436024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2263045535883436028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ea0f087062160f449af66de1dbd447b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

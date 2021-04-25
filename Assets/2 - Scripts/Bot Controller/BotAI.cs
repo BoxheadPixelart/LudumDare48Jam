@@ -13,6 +13,10 @@ namespace KinematicCharacterController.Bot
         public NavMeshAgent agent => _agent;
         public Queue<BotCommand> commands => _commands;
         public bool isBusy { get; set; } = false;
+        public bool isCommandMoving { get; set; } = false;
+        public bool isCommandRotating { get; set; } = false;
+        public bool isCommandPinging { get; set; } = false;
+
 
         public delegate void StateEvent();
         public StateEvent OnWakeUp { get; set; } = null;
@@ -51,7 +55,7 @@ namespace KinematicCharacterController.Bot
         private void _FilterMessage(string _pMsg)
         {
             /// Split up the message and filter for a bot name
-            if (!_pMsg.StartsWith(name.Replace(" ",""))) return;
+            if (!_pMsg.StartsWith($"!{name.Replace(" ","")}")) return;
             List<string> _parts = new List<string>(_pMsg.Split(' '));
 
             /// Parse out the command
@@ -65,9 +69,9 @@ namespace KinematicCharacterController.Bot
 
             /// Hard-coded specific cases
             if (_cmd.command == BotCommand.Command.Rotate &&
-                (Mathf.Abs(_cmd.value) != 10 || Mathf.Abs(_cmd.value) != 15 || Mathf.Abs(_cmd.value) != 30 ||
-                Mathf.Abs(_cmd.value) != 45 || Mathf.Abs(_cmd.value) != 90 || Mathf.Abs(_cmd.value) != 180)) return;    //  Limit rotations
-            if (_cmd.command == BotCommand.Command.Move) _cmd.value = (_cmd.value / Mathf.Abs(_cmd.value)) * Mathf.Max(Mathf.Abs(_cmd.value), 9);   //  Limit movement from -9 to 9
+                (Mathf.Abs(_cmd.value) != 10 && Mathf.Abs(_cmd.value) != 15 && Mathf.Abs(_cmd.value) != 30 &&
+                Mathf.Abs(_cmd.value) != 45 && Mathf.Abs(_cmd.value) != 90 && Mathf.Abs(_cmd.value) != 180)) return;    //  Limit rotations
+            if (_cmd.command == BotCommand.Command.Move) _cmd.value = (_cmd.value / Mathf.Abs(_cmd.value)) * Mathf.Min(Mathf.Abs(_cmd.value + 2), 11);   //  Limit movement from -9 to 9
             _wakeupCount = (_cmd.command == BotCommand.Command.Awake) ? _wakeupCount + 1 : 0;
             _sleepCount = (_cmd.command == BotCommand.Command.Sleep) ? _sleepCount + 1 : 0;
             if (_wakeupCount == 10)
@@ -83,6 +87,7 @@ namespace KinematicCharacterController.Bot
 
             /// Queue-up the command
             _commands.Enqueue(_cmd);
+            Debug.Log($"{name} queued up command: {_cmd.command.ToString()}!");
         }
 
         #endregion

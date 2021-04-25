@@ -21,6 +21,7 @@ namespace KinematicCharacterController.Bot
         private const string VerticalInput = "Vertical";
         public int zoneCount; 
         float rot;
+        float rotCmdValue = 0;
         public LayerMask cameraLayer;
         public LayerMask worldLayer;
         public BotAI ai;
@@ -108,6 +109,12 @@ namespace KinematicCharacterController.Bot
                     break;
                 case BotState.Auto:
                     _UpdateAITarget();
+                    ai.isBusy = ai.agent.remainingDistance > ai.agent.stoppingDistance + 0.5f;
+                    if (ai.isCommandMoving && !ai.isBusy)
+                    {
+                        ai.isCommandMoving = false;
+                        ai.commands.Dequeue();
+                    }
                     break;
                 case BotState.Manual:
                     _HandleCharacterInput();
@@ -148,41 +155,50 @@ namespace KinematicCharacterController.Bot
             if (ai.commands.Count > 0 && !ai.isBusy)
             {
                 ai.isBusy = true;
-                BotAI.BotCommand _cmd = ai.commands.Dequeue();
+                BotAI.BotCommand _cmd = ai.commands.Peek();
                 switch(_cmd.command)
                 {
                     case BotAI.BotCommand.Command.Rotate:
-                        rot += _cmd.value;
+                        if (ai.isCommandRotating) break;
+                        rotCmdValue = _cmd.value;
+                        ai.isCommandRotating = true;
                         DOTween.To(() => _aiTimer, x => _aiTimer = x, 1f, 1f)
-                            .OnComplete(() => { ai.isBusy = false; });
+                            .OnComplete(() => { ai.commands.Dequeue(); ai.isCommandRotating = false; ai.isBusy = false; });
                         break;
                     case BotAI.BotCommand.Command.Move:
-                        ai.agent.SetDestination(Character.transform.position + Character.transform.forward);
+                        if (ai.isCommandMoving) break;
+                        ai.agent.SetDestination(Character.transform.position + (Character.transform.forward * _cmd.value));
+                        ai.isCommandMoving = true;
                         break;
                     case BotAI.BotCommand.Command.Ping:
+                        if (ai.isCommandPinging) break;
                         PingCameras();
+                        ai.isCommandPinging = false;
+                        ai.commands.Dequeue();
                         DOTween.To(() => _aiTimer, x => _aiTimer = x, 1f, 1f)
-                            .OnComplete(() => { ai.isBusy = false; });
+                            .OnComplete(() => { ai.isCommandPinging = false; ai.isBusy = false; });
                         break;
                     case BotAI.BotCommand.Command.Sleep:
-                        DOTween.To(() => _aiTimer, x => _aiTimer = x, 1f, 1f)
-                            .OnComplete(() => { ai.isBusy = false; });
-                        break;
                     case BotAI.BotCommand.Command.Awake:
-                        DOTween.To(() => _aiTimer, x => _aiTimer = x, 1f, 1f)
-                            .OnComplete(() => { ai.isBusy = false; });
+                        ai.commands.Dequeue();
                         break;
                 }
             }
-            Vector3 _cachedAngles = lookTarget.transform.rotation.eulerAngles;
-            float _angles = Quaternion.FromToRotation(lookTarget.transform.forward, (ai.agent.transform.position - Character.transform.position).normalized).eulerAngles.y - 180f;
-            rot += (_angles > -10f && _angles < 10f) ? 0f : ((_angles >= 10f) ? -2f : 2f);
-            characterInputs = new PlayerCharacterInputs()
+            FollowAgent();
+
+            /// Follow AI Agent
+            void FollowAgent()
             {
-                MoveAxisForward = (Vector3.Distance(ai.agent.transform.position, Character.transform.position) > ai.agent.stoppingDistance) ? 0.95f : 0f,
-                CameraRotation = lookTarget.transform.rotation
-            };
-            Character.SetInputs(ref characterInputs);
+                Vector3 _cachedAngles = lookTarget.transform.rotation.eulerAngles;
+                float _angles = (ai.isBusy) ? Quaternion.FromToRotation(lookTarget.transform.forward, (ai.agent.transform.position - Character.transform.position).normalized).eulerAngles.y - 180f : 0f;
+                rot += (!ai.isCommandRotating) ? ((_angles > -10f && _angles < 10f) ? 0f : ((_angles >= 10f) ? -2f : 2f)) : rotCmdValue * Time.deltaTime;
+                characterInputs = new PlayerCharacterInputs()
+                {
+                    MoveAxisForward = (Vector3.Distance(ai.agent.transform.position, Character.transform.position) > ai.agent.stoppingDistance) ? 0.95f : 0f,
+                    CameraRotation = lookTarget.transform.rotation
+                };
+                Character.SetInputs(ref characterInputs);
+            }
         }
 
     }
