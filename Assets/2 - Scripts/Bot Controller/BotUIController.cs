@@ -32,7 +32,11 @@ public class BotUIController : MonoBehaviour
         aiButton.onClick.AddListener(SetBotAI);
         sleepButton.onClick.AddListener(SetBotSleep);
         pingCamera.onClick.AddListener(PingCamera);
-        toggleZoom.onClick.AddListener(ToggleZoom); 
+        toggleZoom.onClick.AddListener(ToggleZoom);
+        //
+        bot.OnStateChange -= UpdateScrollBar;
+        bot.OnStateChange += UpdateScrollBar;
+        print(gameObject.name + " subscripted to Bot State Change");
     }
    
     // Update is called once per frame
@@ -57,20 +61,22 @@ public class BotUIController : MonoBehaviour
     {
         print("ACTIVE");
         handleScaleOffset += 0.4f;
-        SetScrollActive(); 
+        bot.SetManual();
+        PlayerManager.instance.player.DisableMove(); 
     }
     void SetBotAI()
     {
         print("AI");
         handleScaleOffset += 0.4f;
-        SetScrollAI(); 
+        bot.SetAuto();
+        PlayerManager.instance.player.EnableMove();
     }
-
     void SetBotSleep()
     {
         print("Sleep");
         handleScaleOffset += 0.4f;
-        SetScrollSleep(); 
+        bot.SetSleeping();
+        PlayerManager.instance.player.EnableMove();
     }
     // These methods are subscribed to the appropiate bots state change method
     void SetScrollActive()
@@ -89,12 +95,28 @@ public class BotUIController : MonoBehaviour
     {
         stateOutput.value = 1; 
         stateOutput.handleRect.GetComponent<Image>().color = Color.red;
+        print(name + " UI has been Updated to sleep ");
     }
 
     // this parces the bots state and updates ui accordinly 
-    void UpdateScrollBar()
+    void UpdateScrollBar(BotState state)
     {
-
+        print(name + " is in " + state.ToString()); 
+        switch (state)
+        {
+            case BotState.Auto:
+                SetScrollAI(); 
+                break;
+            case BotState.Manual:
+                SetScrollActive();
+                break;
+            case BotState.Sleeping:
+                print(name + " has been set to sleep ");
+                SetScrollSleep();
+                break;
+            default:
+                break;
+        }
     }
 
 }

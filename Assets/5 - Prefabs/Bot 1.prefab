@@ -2098,8 +2098,8 @@ MonoBehaviour:
   worldLayer:
     serializedVersion: 2
     m_Bits: 0
-  ai: {fileID: 0}
-  state: 2
+  ai: {fileID: 636927977311643030}
+  state: 0
 --- !u!114 &636927977311643030
 MonoBehaviour:
   m_ObjectHideFlags: 0

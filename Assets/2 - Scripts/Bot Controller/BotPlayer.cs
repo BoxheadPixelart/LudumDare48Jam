@@ -24,7 +24,7 @@ namespace KinematicCharacterController.Bot
         public LayerMask cameraLayer;
         public LayerMask worldLayer;
         public BotAI ai;
-        public BotState state = BotState.Sleeping;
+        public BotState state = BotState.Auto;
         public delegate void StateChange(BotState _pState);
         public StateChange OnStateChange { get; set; } = null;
         private float _aiTimer = 0;
@@ -37,6 +37,7 @@ namespace KinematicCharacterController.Bot
             PlayerManager.instance.manualBot = (PlayerManager.instance.manualBot == this) ? null : PlayerManager.instance.manualBot;
             state = BotState.Sleeping;
             OnStateChange?.Invoke(state);
+            print(gameObject.name + " is set to sleep");
         }
 
         public void SetAuto()
@@ -52,6 +53,7 @@ namespace KinematicCharacterController.Bot
             if (state == BotState.Manual) return;
             PlayerManager.instance.manualBot?.SetSleeping();
             state = BotState.Manual;
+            PlayerManager.instance.manualBot = this; 
             OnStateChange?.Invoke(state);
         }
 
@@ -89,6 +91,7 @@ namespace KinematicCharacterController.Bot
             rot = lookTarget.transform.rotation.eulerAngles.y;
             ai.OnGoToSleep += () => { if (state == BotState.Auto) SetSleeping(); };
             ai.OnWakeUp += () => { if (state == BotState.Sleeping) SetAuto(); };
+
         }
 
         private void Update()
