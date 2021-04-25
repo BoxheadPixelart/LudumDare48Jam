@@ -16,11 +16,11 @@ public class CameraBrain : MonoBehaviour
     float zoomTime;
     Vector3 lastFramePos;
     float zoomValue;
-
+    public GameObject target;
     float defaultFOV = 60;
    public float minZoomValue = 20;
-    public DG.Tweening.Core.TweenerCore<float, float, DG.Tweening.Plugins.Options.FloatOptions> zoomInTween; 
-    // Start is called before the first frame update
+    public DG.Tweening.Core.TweenerCore<float, float, DG.Tweening.Plugins.Options.FloatOptions> zoomInTween;
+    // Start is called before the first frame update`
     void Start()
     {
         followTarget = false;
@@ -35,6 +35,7 @@ public class CameraBrain : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+    
         //transform.LookAt(lookAt, transform.up);
       //  transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z); 
 
