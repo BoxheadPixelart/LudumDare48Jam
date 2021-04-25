@@ -8,11 +8,46 @@ using System.Threading;
 using System;
 using System.Text;
 
-public class TwitchTest : MonoBehaviour
+[RequireComponent(typeof(TwitchIRC))]
+public class TwitchHookup : MonoBehaviour
 {
 
 	[SerializeField] private TwitchIRC _irc = null;
 	UnityHttpListener _listen = null;
+	public delegate void MessageEvent(string msg);
+	public MessageEvent OnMessageReceived { get; set; } = null;
+
+	public void ConnectTwitch()
+	{
+		if (_irc.twitchDetails.oauth == "") _OpenTwitch();
+	}
+
+	public void StopTwitch() => _irc.IRC_Disconnect();
+
+    private void Update()
+    {
+        if (_irc.twitchDetails.oauth == "" && Input.GetKeyDown(KeyCode.L)) _OpenTwitch();
+		if (_irc.twitchDetails.oauth != "" && !_irc.enabled) _irc.enabled = true;
+	}
+
+	private void _OpenTwitch()
+	{
+		_listen = new UnityHttpListener();
+		_listen.OnAuthReceivedEvent -= _ConfigureIRC;
+		_listen.OnAuthReceivedEvent += _ConfigureIRC;
+		_listen.Start();
+		Application.OpenURL("https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=7eebwhs11hheq8ilzp1r2uz69n8fv0&redirect_uri=http://localhost&scope=chat:read%20chat:edit%20channel:read:redemptions%20channel:read:subscriptions&force_verify=true");
+	}
+
+	private void _ConfigureIRC()
+	{
+		_irc.newChatMessageEvent.AddListener(_OnMessageReceived);
+		_irc.twitchDetails.oauth = _listen.oAuth;
+		_irc.twitchDetails.nick = _listen.login;
+		_irc.twitchDetails.channel = _listen.login;
+	}
+
+	private void _OnMessageReceived(Chatter _pChatter) => OnMessageReceived?.Invoke(_pChatter.message);
 
 	public class UnityHttpListener
 	{
@@ -41,9 +76,9 @@ public class TwitchTest : MonoBehaviour
 		}
 
 		~UnityHttpListener()
-        {
+		{
 			listener.Stop();
-        }
+		}
 
 		private void startListener()
 		{
@@ -66,7 +101,7 @@ public class TwitchTest : MonoBehaviour
 					///	Respond to the localhost w/ a web page that makes an AJAX call passing along the user's access token.
 					HttpListenerResponse response = context.Response;
 					// Construct a response.
-					byte[] buffer = Encoding.UTF8.GetBytes(File.ReadAllText(Application.streamingAssetsPath+"/authPage.html"));
+					byte[] buffer = Encoding.UTF8.GetBytes(File.ReadAllText(Application.streamingAssetsPath + "/authPage.html"));
 					// Get a response stream and write the response to it.
 					response.ContentLength64 = buffer.Length;
 					Stream output = response.OutputStream;
@@ -89,37 +124,5 @@ public class TwitchTest : MonoBehaviour
 			context.Response.Close();
 		}
 	}
-
-	public void OpenTwitch()
-    {
-		 _listen = new UnityHttpListener();
-		_listen.OnAuthReceivedEvent -= _ConfigureIRC;
-		_listen.OnAuthReceivedEvent += _ConfigureIRC;
-		_listen.Start();
-        Application.OpenURL("https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=7eebwhs11hheq8ilzp1r2uz69n8fv0&redirect_uri=http://localhost&scope=chat:read%20chat:edit%20channel:read:redemptions%20channel:read:subscriptions&force_verify=true");
-    }
-
-    private void Update()
-    {
-        if (_irc.twitchDetails.oauth == "" && Input.GetKeyDown(KeyCode.L)) OpenTwitch();
-		if (_irc.twitchDetails.oauth != "" && !_irc.enabled) _irc.enabled = true;
-    }
-
-    private void _ConfigureIRC()
-	{
-		_irc.newChatMessageEvent.AddListener(_OnMessageReceived);
-		_irc.twitchDetails.oauth = _listen.oAuth;
-		_irc.twitchDetails.nick = _listen.login;
-		_irc.twitchDetails.channel = _listen.login;
-	}
-
-	private void _OnMessageReceived(Chatter _pChatter)
-    {
-		Debug.Log(_pChatter.login + ":\t" + _pChatter.message);
-		if (_pChatter.message == "!Quit")
-        {
-			_irc.IRC_Disconnect();
-        }
-    }
 
 }
