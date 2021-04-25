@@ -27,4 +27,21 @@ public class PlayerManager : MonoBehaviour
     {
         print("A Button has been clicked"); 
     }
+    private void Update()
+    {
+       if (manualBot)
+       {
+            if (player.isActive)
+            {
+                player.DisableMove(); 
+            }
+       } 
+        else
+        {
+            if(player.isActive == false)
+            {
+                player.EnableMove(); 
+            }
+        }
+    }
 }

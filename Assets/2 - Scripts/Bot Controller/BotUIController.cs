@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using KinematicCharacterController.Bot;
 using UnityEngine.UI;
-using UnityEngine.Events; 
+using UnityEngine.Events;
+using TMPro; 
 
 public class BotUIController : MonoBehaviour
 {
+    public Vector3 startPos;
+    public Quaternion startRot;
+    public Vector3 startScale; 
     public BotPlayer bot;
 
     public Scrollbar stateOutput; 
@@ -15,16 +19,18 @@ public class BotUIController : MonoBehaviour
     public Button sleepButton;
     public Button pingCamera;
     public Button toggleZoom;
-
+    public TextMeshProUGUI title; 
     //
     float handleScaleOffset;
     float pingScaleOffset;
     float toggleZoomScaleOffset; 
+    
     //
 
     // Start is called  the first frame update
     void Start()
     {
+        title.text = bot.name; 
         handleScaleOffset = 0f;
         pingScaleOffset = 0f;
         toggleZoomScaleOffset = 0f; 
@@ -37,6 +43,9 @@ public class BotUIController : MonoBehaviour
         bot.OnStateChange -= UpdateScrollBar;
         bot.OnStateChange += UpdateScrollBar;
         print(gameObject.name + " subscripted to Bot State Change");
+        startPos = transform.position;
+        startRot = transform.rotation;
+        startScale = transform.localScale;
     }
    
     // Update is called once per frame
@@ -48,6 +57,19 @@ public class BotUIController : MonoBehaviour
         stateOutput.handleRect.localScale = new Vector3(1 + handleScaleOffset, 1 + handleScaleOffset, 1 + handleScaleOffset); 
     }
 
+    public void LookAtCamera()
+    {
+        transform.SetAsLastSibling(); 
+        transform.LookAt(Camera.main.transform);
+        transform.localScale = new Vector3(2, 2, 2); 
+    }
+    public void ResetLook()
+    {
+        print("RESET PANEL LOOK"); 
+        transform.position = startPos;
+        transform.rotation = startRot;
+        transform.localScale = startScale; 
+    }
     void ToggleZoom()
     {
 
@@ -62,21 +84,21 @@ public class BotUIController : MonoBehaviour
         print("ACTIVE");
         handleScaleOffset += 0.4f;
         bot.SetManual();
-        PlayerManager.instance.player.DisableMove(); 
+
     }
     void SetBotAI()
     {
         print("AI");
         handleScaleOffset += 0.4f;
         bot.SetAuto();
-        PlayerManager.instance.player.EnableMove();
+
     }
     void SetBotSleep()
     {
         print("Sleep");
         handleScaleOffset += 0.4f;
         bot.SetSleeping();
-        PlayerManager.instance.player.EnableMove();
+ 
     }
     // These methods are subscribed to the appropiate bots state change method
     void SetScrollActive()

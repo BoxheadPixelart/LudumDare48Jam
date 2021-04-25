@@ -16,7 +16,8 @@ namespace KinematicCharacterController.Custom
         private const string MouseScrollInput = "Mouse ScrollWheel";
         private const string HorizontalInput = "Horizontal";
         private const string VerticalInput = "Vertical";
-        bool isActive; 
+        public bool isActive;
+        PlayerCharacterInputs characterInputs = new PlayerCharacterInputs();
         private void Start()
         {
             EnableMove();
@@ -82,7 +83,7 @@ namespace KinematicCharacterController.Custom
 
         private void HandleCharacterInput()
         {
-            PlayerCharacterInputs characterInputs = new PlayerCharacterInputs();
+            characterInputs = new PlayerCharacterInputs();
 
             // Build the CharacterInputs struct
             characterInputs.MoveAxisForward = Input.GetAxisRaw(VerticalInput);
@@ -101,7 +102,9 @@ namespace KinematicCharacterController.Custom
         }
         public void DisableMove()
         {
-            isActive = false; 
+            isActive = false;
+            characterInputs = new PlayerCharacterInputs();
+            Character.SetInputs(ref characterInputs);
         }
     }
 }
