@@ -30,6 +30,7 @@ namespace KinematicCharacterController.Bot
         public StateChange OnStateChange { get; set; } = null;
         private float _aiTimer = 0;
         PlayerCharacterInputs characterInputs = new PlayerCharacterInputs();
+        private float navmeshCheckInterval = 1f;
 
         public bool canPing => zoneCount > 0;
 
@@ -189,6 +190,12 @@ namespace KinematicCharacterController.Bot
             /// Follow AI Agent
             void FollowAgent()
             {
+                if (navmeshCheckInterval <= 0)
+                {
+                    navmeshCheckInterval = 1f;
+                    if (Vector3.Distance(Character.transform.position, ai.agent.transform.position) > 3f) ai.agent.transform.position = Character.transform.position;
+                }
+                navmeshCheckInterval -= Time.deltaTime;
                 Vector3 _cachedAngles = lookTarget.transform.rotation.eulerAngles;
                 float _angles = (ai.isBusy) ? Quaternion.FromToRotation(lookTarget.transform.forward, (ai.agent.transform.position - Character.transform.position).normalized).eulerAngles.y - 180f : 0f;
                 rot += (!ai.isCommandRotating) ? ((_angles > -10f && _angles < 10f) ? 0f : ((_angles >= 10f) ? -2f : 2f)) : rotCmdValue * Time.deltaTime;
