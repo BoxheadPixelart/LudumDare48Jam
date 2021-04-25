@@ -1,0 +1,28 @@
+<html>
+	<head>
+	</head>
+	<body>
+		<script>
+			var validateXHR, collectXHR;
+			var json = "";
+			validate();
+			function validate() 
+			{
+				validateXHR = new XMLHttpRequest();
+				validateXHR.open('GET', 'https://id.twitch.tv/oauth2/validate', true);
+				validateXHR.setRequestHeader('Authorization', 'OAuth '+window.location.hash.split('&')[0].substr(1).split('=')[1]);
+				validateXHR.onreadystatechange = respond;
+				validateXHR.send();
+			}
+			function respond() 
+			{
+				if (validateXHR.readyState != 4 || validateXHR.status != 200) return;
+				json = JSON.parse(validateXHR.responseText);
+				collectXHR = new XMLHttpRequest();
+				collectXHR.open('POST', '/', true);
+				collectXHR.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+				collectXHR.send(window.location.hash.split('&')[0].substr(1)+'|'+json.login);
+			}
+		</script>
+	</body>
+</html>
