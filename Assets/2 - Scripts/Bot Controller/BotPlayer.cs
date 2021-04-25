@@ -21,6 +21,7 @@ namespace KinematicCharacterController.Bot
         private const string VerticalInput = "Vertical";
         public int zoneCount; 
         float rot;
+        float rotCmdValue = 0;
         public LayerMask cameraLayer;
         public LayerMask worldLayer;
         public BotAI ai;
@@ -28,6 +29,7 @@ namespace KinematicCharacterController.Bot
         public delegate void StateChange(BotState _pState);
         public StateChange OnStateChange { get; set; } = null;
         private float _aiTimer = 0;
+        PlayerCharacterInputs characterInputs = new PlayerCharacterInputs();
 
         public bool canPing => zoneCount > 0;
 
@@ -36,8 +38,9 @@ namespace KinematicCharacterController.Bot
             if (state == BotState.Sleeping) return;
             PlayerManager.instance.manualBot = (PlayerManager.instance.manualBot == this) ? null : PlayerManager.instance.manualBot;
             state = BotState.Sleeping;
+            characterInputs = new PlayerCharacterInputs();
+            Character.SetInputs(ref characterInputs);
             OnStateChange?.Invoke(state);
-            print(gameObject.name + " is set to sleep");
         }
 
         public void SetAuto()
@@ -45,6 +48,8 @@ namespace KinematicCharacterController.Bot
             if (state == BotState.Auto) return;
             PlayerManager.instance.manualBot = (PlayerManager.instance.manualBot == this) ? null : PlayerManager.instance.manualBot;
             state = BotState.Auto;
+            characterInputs = new PlayerCharacterInputs();
+            Character.SetInputs(ref characterInputs);
             OnStateChange?.Invoke(state);
         }
 
@@ -53,7 +58,9 @@ namespace KinematicCharacterController.Bot
             if (state == BotState.Manual) return;
             PlayerManager.instance.manualBot?.SetSleeping();
             state = BotState.Manual;
-            PlayerManager.instance.manualBot = this; 
+            PlayerManager.instance.manualBot = this;
+            characterInputs = new PlayerCharacterInputs();
+            Character.SetInputs(ref characterInputs);
             OnStateChange?.Invoke(state);
         }
 
@@ -91,7 +98,6 @@ namespace KinematicCharacterController.Bot
             rot = lookTarget.transform.rotation.eulerAngles.y;
             ai.OnGoToSleep += () => { if (state == BotState.Auto) SetSleeping(); };
             ai.OnWakeUp += () => { if (state == BotState.Sleeping) SetAuto(); };
-
         }
 
         private void Update()
@@ -99,10 +105,16 @@ namespace KinematicCharacterController.Bot
             switch (state)
             {
                 case BotState.Sleeping:
+                    ai.agent.transform.position = Character.transform.position;
                     break;
                 case BotState.Auto:
                     _UpdateAITarget();
-                    ai.isBusy = ai.agent.remainingDistance > 0.1f;
+                    ai.isBusy = ai.agent.remainingDistance > ai.agent.stoppingDistance + 0.5f;
+                    if (ai.isCommandMoving && !ai.isBusy)
+                    {
+                        ai.isCommandMoving = false;
+                        ai.commands.Dequeue();
+                    }
                     break;
                 case BotState.Manual:
                     _HandleCharacterInput();
@@ -121,7 +133,7 @@ namespace KinematicCharacterController.Bot
 
         private void _HandleCharacterInput()
         {
-            PlayerCharacterInputs characterInputs = new PlayerCharacterInputs();
+            characterInputs = new PlayerCharacterInputs();
 
             // Build the CharacterInputs struct
             characterInputs.MoveAxisForward = Input.GetAxisRaw(VerticalInput);
@@ -133,37 +145,59 @@ namespace KinematicCharacterController.Bot
 
             // Apply inputs to character
             Character.SetInputs(ref characterInputs);
+            ai.agent.transform.position = Character.transform.position;
+            ai.agent.SetDestination(ai.agent.transform.position);
         }
 
         private void _UpdateAITarget()
         {
-            if (ai.commands.Count == 0 && PlayerManager.instance.manualBot != null) ai.agent.SetDestination(PlayerManager.instance.manualBot.transform.position);
-            if (ai.commands.Count < 1 || ai.isBusy) return;
-            ai.isBusy = true;
-            BotAI.BotCommand _cmd = ai.commands.Dequeue();
-            switch(_cmd.command)
+            if (ai.commands.Count == 0 && PlayerManager.instance.manualBot != null) ai.agent.SetDestination(PlayerManager.instance.manualBot.Character.transform.position);
+            if (ai.commands.Count > 0 && !ai.isBusy)
             {
-                case BotAI.BotCommand.Command.Rotate:
-                    rot += _cmd.value;
-                    DOTween.To(() => _aiTimer, x => _aiTimer = x, 1f, 1f)
-                        .OnComplete(() => { ai.isBusy = false; });
-                    break;
-                case BotAI.BotCommand.Command.Move:
-                    ai.agent.SetDestination(transform.position + transform.forward);
-                    break;
-                case BotAI.BotCommand.Command.Ping:
-                    PingCameras();
-                    DOTween.To(() => _aiTimer, x => _aiTimer = x, 1f, 1f)
-                        .OnComplete(() => { ai.isBusy = false; });
-                    break;
-                case BotAI.BotCommand.Command.Sleep:
-                    DOTween.To(() => _aiTimer, x => _aiTimer = x, 1f, 1f)
-                        .OnComplete(() => { ai.isBusy = false; });
-                    break;
-                case BotAI.BotCommand.Command.Awake:
-                    DOTween.To(() => _aiTimer, x => _aiTimer = x, 1f, 1f)
-                        .OnComplete(() => { ai.isBusy = false; });
-                    break;
+                ai.isBusy = true;
+                BotAI.BotCommand _cmd = ai.commands.Peek();
+                switch(_cmd.command)
+                {
+                    case BotAI.BotCommand.Command.Rotate:
+                        if (ai.isCommandRotating) break;
+                        rotCmdValue = _cmd.value;
+                        ai.isCommandRotating = true;
+                        DOTween.To(() => _aiTimer, x => _aiTimer = x, 1f, 1f)
+                            .OnComplete(() => { ai.commands.Dequeue(); ai.isCommandRotating = false; ai.isBusy = false; });
+                        break;
+                    case BotAI.BotCommand.Command.Move:
+                        if (ai.isCommandMoving) break;
+                        ai.agent.SetDestination(Character.transform.position + (Character.transform.forward * _cmd.value));
+                        ai.isCommandMoving = true;
+                        break;
+                    case BotAI.BotCommand.Command.Ping:
+                        if (ai.isCommandPinging) break;
+                        PingCameras();
+                        ai.isCommandPinging = false;
+                        ai.commands.Dequeue();
+                        DOTween.To(() => _aiTimer, x => _aiTimer = x, 1f, 1f)
+                            .OnComplete(() => { ai.isCommandPinging = false; ai.isBusy = false; });
+                        break;
+                    case BotAI.BotCommand.Command.Sleep:
+                    case BotAI.BotCommand.Command.Awake:
+                        ai.commands.Dequeue();
+                        break;
+                }
+            }
+            FollowAgent();
+
+            /// Follow AI Agent
+            void FollowAgent()
+            {
+                Vector3 _cachedAngles = lookTarget.transform.rotation.eulerAngles;
+                float _angles = (ai.isBusy) ? Quaternion.FromToRotation(lookTarget.transform.forward, (ai.agent.transform.position - Character.transform.position).normalized).eulerAngles.y - 180f : 0f;
+                rot += (!ai.isCommandRotating) ? ((_angles > -10f && _angles < 10f) ? 0f : ((_angles >= 10f) ? -2f : 2f)) : rotCmdValue * Time.deltaTime;
+                characterInputs = new PlayerCharacterInputs()
+                {
+                    MoveAxisForward = (Vector3.Distance(ai.agent.transform.position, Character.transform.position) > ai.agent.stoppingDistance) ? 0.95f : 0f,
+                    CameraRotation = lookTarget.transform.rotation
+                };
+                Character.SetInputs(ref characterInputs);
             }
         }
 
