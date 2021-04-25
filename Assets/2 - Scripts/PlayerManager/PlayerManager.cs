@@ -8,61 +8,21 @@ public class PlayerManager : MonoBehaviour
 {
     public CustomPlayer player;
     public BotPlayer[] bots;
-    bool playerIsActive = true; 
+    public BotPlayer manualBot { get; set; } = null;
+    public TwitchHookup twitch;
+    public static PlayerManager instance { get; private set; } = null;
+
     // Start is called before the first frame update
     void Start()
     {
+        instance = instance ?? this;
         Cursor.lockState = CursorLockMode.Locked;
         //Cursor.lockState = CursorLockMode.Confined;
-        EnablePlayer();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public void EnablePlayer()
-    {
-        playerIsActive = true;
         player.EnableMove();
-        foreach (BotPlayer bot in bots)
-        {
-            bot.DisableMove(); 
-        }
-    }
-    public void EnableBot(BotPlayer selectBot)
-    {
-        playerIsActive = false;
-        player.DisableMove();
-        foreach (BotPlayer bot in bots)
-        {
-            
-            if (bot == selectBot)
-            {
-                bot.EnableMove(); 
-            } else
-            {
-                bot.DisableMove();
-            }
-        }
-        //
     }
 
-    public void ToggleBot(BotPlayer selectBot)
-    {
-        if (playerIsActive)
-        {
-            EnableBot(selectBot); 
-        } else
-        {
-            EnablePlayer(); 
-        }
-    }
     public void ButtonCheck()
     {
         print("A Button has been clicked"); 
     }
-
 }

@@ -6,6 +6,7 @@ using System.Threading;
 using UnityEngine;
 
 // https://github.com/lexonegit/Unity-Twitch-Chat
+[DisallowMultipleComponent()]
 public class TwitchIRC : MonoBehaviour
 {
     [HideInInspector] public class NewChatMessageEvent : UnityEngine.Events.UnityEvent<Chatter> { }
