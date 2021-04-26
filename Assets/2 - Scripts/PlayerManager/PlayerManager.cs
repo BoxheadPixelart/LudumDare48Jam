@@ -10,7 +10,6 @@ public class PlayerManager : MonoBehaviour
     public CustomPlayer player;
     public BotPlayer[] bots;
     public BotPlayer manualBot = null;
-    public TwitchHookup twitch;
     public GameObject worldCanvas;
     public GameObject panelPrefab;
     public GameObject currentLevel; 
