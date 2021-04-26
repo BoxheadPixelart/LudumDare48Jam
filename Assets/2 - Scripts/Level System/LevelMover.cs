@@ -36,7 +36,7 @@ public class LevelMover : MonoBehaviour
             transform.DOMoveY(0, 2).SetEase(Ease.Linear).OnComplete(() => { SetLevelUpper(); PlayerManager.instance.levelManager.LoadNextScene(); }); ;
         } else
         {
-            transform.DOMoveY(0, 2).SetEase(Ease.Linear).OnComplete(() => { mesh.BuildNavMesh(); levelData.TurnOnMotors(); });
+            transform.DOMoveY(0, 2).SetEase(Ease.Linear).OnComplete(() => {levelData.TurnOnMotors(); });
         }
       
     }

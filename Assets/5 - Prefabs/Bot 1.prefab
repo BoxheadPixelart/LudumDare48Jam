@@ -1652,6 +1652,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nameplatePrefab: {fileID: 8100202972987532451, guid: 4c433021986a70042a0578055c828137, type: 3}
+  cameraGroup: {fileID: 0}
   nameplates: []
   bot: {fileID: 4948179390843459437}
   layers: 07000000080000000b0000000c0000000d0000000e0000000f000000110000001200000013000000
@@ -1768,7 +1769,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4948179389002664718}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.194, y: 2.25, z: -0.653}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4948179388928521587}

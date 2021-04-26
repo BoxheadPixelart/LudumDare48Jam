@@ -53,7 +53,7 @@ public class PlayerManager : MonoBehaviour
 
     public void SetupBots()
     {
-        for (int i = 0; i < bots.Length - 1; i++)
+        for (int i = 0; i < bots.Length; i++)
         {
          GameObject panel =   Instantiate(panelPrefab, worldCanvas.transform);
             print("Panel Game obj created"); 
@@ -65,7 +65,7 @@ public class PlayerManager : MonoBehaviour
         }
         StartCoroutine(SetPanelPostions()); 
     }
-
+    
     IEnumerator SetPanelPostions()
     {
         yield return new WaitForSeconds(1);

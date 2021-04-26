@@ -11,18 +11,15 @@ public class LevelManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        currentLevel = 0; 
-        numberOfScenes = SceneManager.sceneCountInBuildSettings; 
-       
+        currentLevel = 1; 
+        numberOfScenes = SceneManager.sceneCountInBuildSettings;
+        LoadNextScene();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            LoadNextScene(); 
-        }
+      
     }
    public void LoadNextScene()
     {
