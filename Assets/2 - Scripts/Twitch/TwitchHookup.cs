@@ -12,6 +12,8 @@ using System.Text;
 public class TwitchHookup : MonoBehaviour
 {
 
+	public static TwitchHookup instance { get; private set; } = null;
+	public bool isConnected { get; private set; } = false;
 	[SerializeField] private TwitchIRC _irc = null;
 	UnityHttpListener _listen = null;
 	public delegate void MessageEvent(string msg);
@@ -24,18 +26,32 @@ public class TwitchHookup : MonoBehaviour
 
 	public void StopTwitch() => _irc.IRC_Disconnect();
 
-    private void Update()
+	private void Awake() => instance = instance ?? this;
+
+	private void Start()
+	{
+		_irc.statusEvent.RemoveListener(_StateChange);
+		_irc.statusEvent.AddListener(_StateChange);
+		DontDestroyOnLoad(gameObject);
+	}
+
+	private void Update()
     {
-        if (_irc.twitchDetails.oauth == "" && Input.GetKeyDown(KeyCode.L)) _OpenTwitch();
 		if (_irc.twitchDetails.oauth != "" && !_irc.enabled) _irc.enabled = true;
 	}
 
+	private void _StateChange(TwitchIRC.StatusType _type, string _msg, int _perc) => isConnected = (_type == TwitchIRC.StatusType.Success);
+
 	private void _OpenTwitch()
 	{
-		_listen = new UnityHttpListener();
-		_listen.OnAuthReceivedEvent -= _ConfigureIRC;
-		_listen.OnAuthReceivedEvent += _ConfigureIRC;
-		_listen.Start();
+		if (_irc.twitchDetails.oauth != "") return;
+		if (_listen == null)
+        {
+			_listen = new UnityHttpListener();
+			_listen.OnAuthReceivedEvent -= _ConfigureIRC;
+			_listen.OnAuthReceivedEvent += _ConfigureIRC;
+			_listen.Start();
+        }
 		Application.OpenURL("https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=7eebwhs11hheq8ilzp1r2uz69n8fv0&redirect_uri=http://localhost&scope=chat:read%20chat:edit%20channel:read:redemptions%20channel:read:subscriptions&force_verify=true");
 	}
 

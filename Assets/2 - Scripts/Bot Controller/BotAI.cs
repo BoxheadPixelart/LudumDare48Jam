@@ -39,8 +39,8 @@ namespace KinematicCharacterController.Bot
 
         private void Start()
         {
-            if (PlayerManager.instance.twitch == null) return;
-            PlayerManager.instance.twitch.OnMessageReceived += _FilterMessage;
+            if (TwitchHookup.instance == null) return;
+            TwitchHookup.instance.OnMessageReceived += _FilterMessage;
             _allCommandTypes = new List<BotCommand.Command>();
             foreach (int i in System.Enum.GetValues(typeof(BotCommand.Command)))
             {

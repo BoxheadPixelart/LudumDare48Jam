@@ -47,7 +47,7 @@ public class TwitchIRC : MonoBehaviour
         public bool parseBadges = true;
         public bool parseTwitchEmotes = true;
         [Space(12f)]
-        public bool debugIRC = true;
+        public bool debugIRC = false;
     }
 
     #region Unity MonoBehaviour functions
