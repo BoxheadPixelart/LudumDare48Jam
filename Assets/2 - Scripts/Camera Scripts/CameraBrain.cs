@@ -19,6 +19,7 @@ public class CameraBrain : MonoBehaviour
     public GameObject target;
     float defaultFOV = 60;
    public float minZoomValue = 20;
+    bool isZoomedIn; 
     public DG.Tweening.Core.TweenerCore<float, float, DG.Tweening.Plugins.Options.FloatOptions> zoomInTween;
     // Start is called before the first frame update`
     void Start()
@@ -43,6 +44,7 @@ public class CameraBrain : MonoBehaviour
         {
             Vector3 followOffset = followTransform.position;
             lookAt.position = new Vector3(followOffset.x, followOffset.y + 2.5f, followOffset.z); 
+            /*
             if (IsLookAtStill())
             {
                 
@@ -57,6 +59,7 @@ public class CameraBrain : MonoBehaviour
                 zoomTimer = 0;
                 SetZoomOut(); 
             }
+            */
         }
 
         vCam.m_Lens.FieldOfView = zoomValue; 
@@ -100,9 +103,19 @@ public class CameraBrain : MonoBehaviour
     {
         lookAt.DOMove(startPos, 1); 
     }
-
-    void SetZoomIn()
+    public void ToggleZoom()
     {
+        if (isZoomedIn)
+        {
+            SetZoomOut(); 
+        } else
+        {
+            SetZoomIn(); 
+        }
+    }
+    public void SetZoomIn()
+    {
+        isZoomedIn = true;
         if (zoomInTween == null)
         {
             zoomInTween = DOTween.To(() => zoomValue, x => zoomValue = x, minZoomValue, 3f).OnComplete(() => { zoomInTween = null;}) ; 
@@ -110,18 +123,20 @@ public class CameraBrain : MonoBehaviour
         
     }
 
-    void SetZoomOut()
+    public void SetZoomOut()
     {
-            if (zoomValue != defaultFOV)
-            {
-                  if (zoomInTween != null)
-                  {
-                        print("Has Killed Zoom In"); 
-                      zoomInTween.Kill();
-                     zoomInTween = null; 
-                  }
-            
-                DOTween.To(() => zoomValue, x => zoomValue = x, defaultFOV, .5f);
-            }
+        isZoomedIn = false; 
+       if (zoomValue != defaultFOV)
+       {
+             if (zoomInTween != null)
+             {
+                   print("Has Killed Zoom In"); 
+                 zoomInTween.Kill();
+                zoomInTween = null; 
+
+             }
+       
+           DOTween.To(() => zoomValue, x => zoomValue = x, defaultFOV, .5f);
+       }
     }
 }
