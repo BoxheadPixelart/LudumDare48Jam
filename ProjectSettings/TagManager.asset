@@ -3,7 +3,9 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Bot
+  - PlayerManager
   layers:
   - Default
   - TransparentFX
@@ -25,8 +27,8 @@ TagManager:
   - Render 8
   - Render 9
   - Render 10
-  - 
-  - 
+  - Button
+  - Panel
   - 
   - 
   - 

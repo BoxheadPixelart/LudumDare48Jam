@@ -19,15 +19,18 @@ public class CameraZone : MonoBehaviour
     }
     private void OnTriggerExit(Collider other)
     {
+        BotPlayer bot = other.transform.parent.GetComponent<BotPlayer>();
+        if (bot)
+        {
+            bot.zoneCount -= 1;
+            bot.cameras.Remove(brain);
+        }
         print("Something Left a Camera Trigger Zone"); 
         if (other.transform == brain.followTransform)
         {
             brain.DeselectTarget();
-            BotPlayer bot = other.transform.parent.GetComponent<BotPlayer>();
-            if (bot)
-            {
-                bot.zoneCount -= 1; 
-            }
+           
+         
         }
       
     }
@@ -37,7 +40,8 @@ public class CameraZone : MonoBehaviour
         BotPlayer bot = other.transform.parent.GetComponent<BotPlayer>();
         if (bot)
         {
-            bot.zoneCount += 1; 
+            bot.zoneCount += 1;
+            bot.cameras.Add(brain); 
         }
     }
 }

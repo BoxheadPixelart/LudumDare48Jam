@@ -11,7 +11,11 @@ public class PlayerUIController : MonoBehaviour
     public List<GameObject> obj; 
     PointerEventData ped = new PointerEventData(null);
     public string output;
-    public RectTransform cursor; 
+    public RectTransform cursor;
+    public LayerMask buttonLayer;
+    public LayerMask panelLayer;
+    public BotUIController panel;
+    BotUIController cachedPanel; 
     // Start is called before the first frame update
     void Start()
     {
@@ -23,39 +27,51 @@ public class PlayerUIController : MonoBehaviour
     void Update()
     {
         ped.position = Input.mousePosition;
-
-        if (Input.GetMouseButtonDown(0))
+        gr.Raycast(ped, results);
+        if (results.Count > 0)
         {
-            print("Player UI Detecting Click");
-            gr.Raycast(ped, results);
-            print("Player UI Raycasting");
-            if (results.Count > 0)
-            {
-                print("Player UI Raycaster has result: " + results[results.Count - 1].gameObject.name);
-
-                Button button = results[results.Count - 1].gameObject.GetComponent<Button>();
-                if (button)
-                {
-                    button.onClick.Invoke();
-                    
+              if (Input.GetMouseButtonDown(0))
+              {
+                  foreach (RaycastResult hit in results)
+                  {
+                      Button button = hit.gameObject.GetComponent<Button>();
+                      if (button)
+                      {
+                          button.onClick.Invoke();
+                            break;
+                    }
                 }
-         
-             //cursor.anchoredPosition = new Vector3(results[results.Count - 1].screenPosition.x, results[results.Count - 1].screenPosition.y);
-            }
-        } 
-        if (Input.GetMouseButtonUp(0))
-        {
-            results.Clear(); 
+              }
+             foreach (RaycastResult hit in results)
+             {
+                  panel = hit.gameObject.transform.parent.GetComponent<BotUIController>();
+                     if (panel)
+                     {
+                         panel.LookAtCamera();
+                        break; 
+                     }
+             }
         }
-
-       
+        else
+        {
+            if (panel)
+            {
+                panel.ResetLook();
+                panel = null;
+            }    
+        }
+        if (panel != cachedPanel)
+        {
+            cachedPanel?.ResetLook(); 
+        }
+        cachedPanel = panel;
     }
-    //Code to be place in a MonoBehaviour with a GraphicRaycaster component
-
-    //Create the PointerEventData with null for the EventSystem
-  
-    //Set required parameters, in this case, mouse position
- 
-//Create list to receive all results
-
+    private void LateUpdate()
+    {
+        results.Clear();
+        
+    }
 }
+
+
+

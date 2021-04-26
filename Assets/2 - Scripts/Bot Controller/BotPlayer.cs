@@ -32,6 +32,7 @@ namespace KinematicCharacterController.Bot
         PlayerCharacterInputs characterInputs = new PlayerCharacterInputs();
         private float navmeshCheckInterval = 1f;
 
+        public List<CameraBrain> cameras = new List<CameraBrain>();
         public bool canPing => zoneCount > 0;
 
         public void SetSleeping()
@@ -69,28 +70,19 @@ namespace KinematicCharacterController.Bot
         {
             if (canPing)
             {
-                Collider[] hits = Physics.OverlapSphere(Character.transform.position, 10, cameraLayer);
-                foreach (Collider hit in hits)
+                foreach (CameraBrain cam in cameras)
                 {
-                    print("We have Detected " + hit.name);
-                    RaycastHit lineHit;
-                    if (Physics.Linecast(hit.transform.position, Character.transform.position, out lineHit, worldLayer))
-                    {
-                        print("Could not ping " + hit.name + ": The " + lineHit.transform.name + "was in the way");
-                    }
-                    else
-                    {
-                        hit.GetComponent<CameraBrain>().ToggleTarget(Character.transform);
-                        print("Camera: " + hit.gameObject.name + " has been found, and pingged");
-                    }
-
+                    cam.ToggleTarget(Character.transform);
                 }
             }
         }
         
         public void ZoomCamera()
         {
-
+            foreach (CameraBrain cam in cameras)
+            {
+                cam.ToggleZoom();
+            }
         }
 
         private void Start()

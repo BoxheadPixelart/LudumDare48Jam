@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using KinematicCharacterController.Bot;
 using UnityEngine.UI;
-using UnityEngine.Events; 
+using UnityEngine.Events;
+using TMPro; 
 
 public class BotUIController : MonoBehaviour
 {
+    public Vector3 startPos;
+    public Quaternion startRot;
+    public Vector3 startScale; 
     public BotPlayer bot;
 
     public Scrollbar stateOutput; 
@@ -15,16 +19,19 @@ public class BotUIController : MonoBehaviour
     public Button sleepButton;
     public Button pingCamera;
     public Button toggleZoom;
-
+    public TextMeshProUGUI title; 
     //
     float handleScaleOffset;
     float pingScaleOffset;
-    float toggleZoomScaleOffset; 
+    float toggleZoomScaleOffset;
+    bool canLook; 
     //
 
     // Start is called  the first frame update
     void Start()
     {
+        canLook = false; 
+        title.text = bot.name; 
         handleScaleOffset = 0f;
         pingScaleOffset = 0f;
         toggleZoomScaleOffset = 0f; 
@@ -36,6 +43,7 @@ public class BotUIController : MonoBehaviour
         //
         bot.OnStateChange -= UpdateScrollBar;
         bot.OnStateChange += UpdateScrollBar;
+        UpdateScrollBar(bot.state); 
         print(gameObject.name + " subscripted to Bot State Change");
     }
    
@@ -43,18 +51,50 @@ public class BotUIController : MonoBehaviour
     void Update()
     {
         handleScaleOffset = handleScaleOffset / 1.1f;
-        pingScaleOffset = pingScaleOffset / 1.1f; 
+        pingScaleOffset = pingScaleOffset / 1.1f;
+        toggleZoomScaleOffset = toggleZoomScaleOffset / 1.1f; 
+        toggleZoom.image.rectTransform.localScale = new Vector3(1 + toggleZoomScaleOffset, 1 + toggleZoomScaleOffset, 1 + toggleZoomScaleOffset);
         pingCamera.image.rectTransform.localScale = new Vector3(1 + pingScaleOffset, 1 + pingScaleOffset, 1 + pingScaleOffset); 
         stateOutput.handleRect.localScale = new Vector3(1 + handleScaleOffset, 1 + handleScaleOffset, 1 + handleScaleOffset); 
     }
-
+    public void SetOrigin()
+    {
+        canLook = true; 
+        print(name + " Has set its origin"); 
+        startPos = transform.position;
+        startRot = transform.rotation;
+        startScale = transform.localScale;
+    }
+    public void LookAtCamera()
+    {
+        if (canLook)
+        {
+            transform.SetAsLastSibling();
+            transform.LookAt(Camera.main.transform);
+            transform.localScale = new Vector3(2, 2, 2);
+        }
+       
+    }
+    public void ResetLook()
+    {
+        if (canLook)
+        {
+            print("RESET PANEL LOOK");
+            transform.position = startPos;
+            transform.rotation = startRot;
+            transform.localScale = startScale;
+        }
+    }
     void ToggleZoom()
     {
-
+        toggleZoomScaleOffset += 0.3f; 
+        bot.ZoomCamera(); 
     }
     void PingCamera()
     {
-        pingScaleOffset += 0.4f; 
+        pingScaleOffset += 0.3f;
+        bot.PingCameras();
+        print("PING CAMERA BUTTON HAS BEEN CLICKED"); 
     }
     // These methods are subscribed to the buttons on the lower-thirds of the panel; 
     void SetBotActive()
@@ -62,21 +102,21 @@ public class BotUIController : MonoBehaviour
         print("ACTIVE");
         handleScaleOffset += 0.4f;
         bot.SetManual();
-        PlayerManager.instance.player.DisableMove(); 
+
     }
     void SetBotAI()
     {
         print("AI");
         handleScaleOffset += 0.4f;
         bot.SetAuto();
-        PlayerManager.instance.player.EnableMove();
+
     }
     void SetBotSleep()
     {
         print("Sleep");
         handleScaleOffset += 0.4f;
         bot.SetSleeping();
-        PlayerManager.instance.player.EnableMove();
+ 
     }
     // These methods are subscribed to the appropiate bots state change method
     void SetScrollActive()
