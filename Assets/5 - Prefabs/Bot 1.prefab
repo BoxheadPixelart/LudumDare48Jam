@@ -1681,7 +1681,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3677951209535846399}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.1940002, y: 2.25, z: -0.6529999}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4948179390843459438}
@@ -1754,7 +1754,7 @@ GameObject:
   - component: {fileID: 4948179389002664706}
   - component: {fileID: 4948179389002664707}
   - component: {fileID: 4948179389002664716}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: BotCharacter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1786,7 +1786,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5
+  m_Radius: 0.3
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
@@ -1803,7 +1803,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Capsule: {fileID: 4948179389002664705}
-  CapsuleRadius: 0.5
+  CapsuleRadius: 0.3
   CapsuleHeight: 2
   CapsuleYOffset: 1
   CapsulePhysicsMaterial: {fileID: 0}
@@ -1816,9 +1816,9 @@ MonoBehaviour:
   StepHandling: 1
   MaxStepHeight: 0.5
   AllowSteppingWithoutStableGrounding: 0
-  MinRequiredStepDepth: 0.1
+  MinRequiredStepDepth: 0
   LedgeAndDenivelationHandling: 1
-  MaxStableDistanceFromLedge: 0.5
+  MaxStableDistanceFromLedge: 0
   MaxVelocityForLedgeSnap: 0
   MaxStableDenivelationAngle: 180
   InteractiveRigidbodyHandling: 1
@@ -1986,7 +1986,7 @@ Transform:
   m_GameObject: {fileID: 4948179389835563080}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
   m_Children:
   - {fileID: 4948179389736209590}
   - {fileID: 1892075869}
@@ -2174,10 +2174,10 @@ MonoBehaviour:
   zoneCount: 0
   cameraLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   worldLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 65536
   ai: {fileID: 636927977311643030}
   state: 0
   cameras: []

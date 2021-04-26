@@ -2318,7 +2318,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh27948
+  m_Name: pb_Mesh89720
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3881,7 +3881,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-408576
+  m_Name: pb_Mesh89844
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -4080,7 +4080,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 711214099}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 334ef5bad7a84704aaff21879e7e7adf, type: 3}
   m_Name: 
@@ -4092,7 +4092,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh28008
+  m_Name: pb_Mesh89780
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -5726,7 +5726,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh27510
+  m_Name: pb_Mesh89276
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -6795,7 +6795,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5760893426719396139, guid: 49ec24750ade7d943abd7f25e4cb8972, type: 3}
       propertyPath: m_CullingMask.m_Bits
-      value: 4294967295
+      value: 3212919
       objectReference: {fileID: 0}
     - target: {fileID: 9029876654019891802, guid: 49ec24750ade7d943abd7f25e4cb8972, type: 3}
       propertyPath: m_StopNaN
@@ -8184,19 +8184,19 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   manualBot: {fileID: 0}
-  twitch: {fileID: 0}
   worldCanvas: {fileID: 6545870864509519530}
   panelPrefab: {fileID: 4735380177907685876, guid: a25dc9ff7ca45bd419b9bccdb5715117, type: 3}
   currentLevel: {fileID: 0}
   panels: []
   levelManager: {fileID: 711214101}
+  progressionUIController: {fileID: 975748892}
 --- !u!43 &1768809581
 Mesh:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh27530
+  m_Name: pb_Mesh89296
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -9356,7 +9356,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &1995404167
 MeshCollider:
   m_ObjectHideFlags: 0

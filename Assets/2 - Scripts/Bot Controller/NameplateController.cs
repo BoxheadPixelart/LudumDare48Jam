@@ -21,7 +21,7 @@ public class NameplateController : MonoBehaviour
         // get all cameras
       //  cameras = FindObjectsOfType(typeof(CinemachineVirtualCamera)) as CinemachineVirtualCamera[];
         //create a nameplate per camera
-        for (int i = 0; i < cameraGroup.cams.Length - 1; i++)
+        for (int i = 0; i <= cameraGroup.cams.Length -1; i++)
         {
             
             GameObject name = Instantiate(nameplatePrefab, transform);
@@ -38,8 +38,10 @@ public class NameplateController : MonoBehaviour
     {
         //update position per camera 
 
-        for (int i = 0; i < cameraGroup.cams.Length - 1; i++)
+        for (int i = 0; i <= cameraGroup.cams.Length - 1; i++)
         {
+            print(nameplates[i].transform);
+            print(cameraGroup.cams.Length); 
             nameplates[i].transform.LookAt(cameraGroup.cams[i].transform); 
         }
     }

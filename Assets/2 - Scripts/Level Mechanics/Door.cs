@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using DG.Tweening; 
 
 public class Door : MonoBehaviour
 {
@@ -9,7 +10,8 @@ public class Door : MonoBehaviour
     #region --------------------    Public Properties
 
     public bool isClosed { get; private set; } = true;
-
+    public GameObject doorMesh;
+    public bool doorMeshIsOpen; 
     #endregion
 
     #region --------------------    Private Fields
@@ -19,6 +21,7 @@ public class Door : MonoBehaviour
     [SerializeField] private NavMeshObstacle _obstacle = null;
     [SerializeField] private Collider _collider = null;
 
+  
     #endregion
 
     #region --------------------    Private Methods
@@ -36,8 +39,32 @@ public class Door : MonoBehaviour
         _obstacle.enabled = isClosed;
         _collider.enabled = isClosed;
         /// Possibly update visuals here?
+        /// 
+        if (isClosed)
+        {
+            if (doorMeshIsOpen)
+            {
+                CloseDoor(); 
+            }
+        } else
+        {
+            if (!doorMeshIsOpen)
+            {
+                OpenDoor(); 
+            }
+        }
+      
     }
 
+    void OpenDoor()
+    {
+        doorMesh.transform.DOLocalMoveY(-7, .75f).SetEase(Ease.OutBounce).OnComplete(() => { doorMeshIsOpen = true; });
+    }
+
+    void CloseDoor()
+    {
+        doorMesh.transform.DOLocalMoveY(0, .75f).SetEase(Ease.OutBounce).OnComplete(() => { doorMeshIsOpen = false;  });
+    }
     #endregion
 
 }

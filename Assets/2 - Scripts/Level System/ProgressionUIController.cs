@@ -51,7 +51,7 @@ public class ProgressionUIController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.T))
         {
-            level += 1; 
+          
             EvaluateSolve();
         } 
         evalFillImage.fillAmount = evalProgress; 
@@ -117,9 +117,11 @@ public class ProgressionUIController : MonoBehaviour
         }
     }
 
-    void EvaluateSolve()
+   public void EvaluateSolve()
     {
+        level += 1;
         evalProgress = 0f;
+
         StartCoroutine(EvaluateSequence()); 
     }
     //

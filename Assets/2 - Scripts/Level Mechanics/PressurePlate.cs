@@ -8,7 +8,8 @@ public class PressurePlate : MonoBehaviour
     #region --------------------    Public Enumerations
 
     public enum PressurePlateState { Inactive, Idle, Pressed };
-
+    public Color activeColor;
+    public Color inactiveColor; 
     #endregion
 
     #region --------------------    Public Properties
@@ -45,7 +46,7 @@ public class PressurePlate : MonoBehaviour
             state = (_hits.Length > 0) ? PressurePlateState.Pressed : PressurePlateState.Idle;
         }
         Debug.DrawLine(transform.position + new Vector3(0f, _triggerRadius, 0f), transform.position + new Vector3(0f, _triggerRadius * 2f, 0f), Color.red, 10f);
-        _rend.material.color = (state == PressurePlateState.Pressed) ? Color.green : ((state == PressurePlateState.Idle) ? Color.red : Color.grey);
+        _rend.material.color = (state == PressurePlateState.Pressed) ? activeColor : ((state == PressurePlateState.Idle) ? inactiveColor : Color.grey);
     }
 
     #endregion

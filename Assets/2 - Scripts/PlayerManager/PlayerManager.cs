@@ -15,7 +15,8 @@ public class PlayerManager : MonoBehaviour
     public GameObject currentLevel; 
     public static PlayerManager instance { get; private set; } = null;
     public List<BotUIController> panels = new List<BotUIController>();
-    public LevelManager levelManager; 
+    public LevelManager levelManager;
+    public ProgressionUIController progressionUIController; 
     // Start is called before the first frame update
     void Start()
     {
