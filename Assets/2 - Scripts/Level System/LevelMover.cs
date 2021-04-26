@@ -8,11 +8,13 @@ public class LevelMover : MonoBehaviour
 {
     public NavMeshSurface mesh;
     public bool skip;
-    public CameraGroup cameras; 
+    public CameraGroup cameras;
+    public LevelData levelData; 
 
     // Start is called before the first frame update
     void Start()
     {
+        levelData = GetComponent<LevelData>(); 
         SetLevelLower();
     }
 
@@ -28,20 +30,29 @@ public class LevelMover : MonoBehaviour
     }
     public void SetLevel()
     {
+   
         if (skip)
         {
-            transform.DOMoveY(0, 4).SetEase(Ease.Linear).OnComplete(() => { SetLevelUpper(); PlayerManager.instance.levelManager.LoadNextScene(); }); ;
+            transform.DOMoveY(0, 2).SetEase(Ease.Linear).OnComplete(() => { SetLevelUpper(); PlayerManager.instance.levelManager.LoadNextScene(); }); ;
         } else
         {
-            transform.DOMoveY(0, 4).SetEase(Ease.Linear).OnComplete(() => { mesh.BuildNavMesh(); }); ;
+            transform.DOMoveY(0, 2).SetEase(Ease.Linear).OnComplete(() => { mesh.BuildNavMesh(); levelData.TurnOnMotors(); });
         }
       
     }
     public void SetLevelUpper()
     {
         
-        cameras.TurnOffBrains(); 
-        transform.DOMoveY(7, 4).SetEase(Ease.Linear).OnComplete(() => { DoNext(); });
+        cameras.TurnOffBrains();
+        levelData.TurnOffMotors(); 
+        if (skip)
+        {
+            transform.DOMoveY(7, 2).SetEase(Ease.Linear).OnComplete(() => { DoNext(); });
+        } else
+        {
+            transform.DOMoveY(7, 2).SetEase(Ease.Linear).OnComplete(() => { DoNext(); });
+        }
+       
     }
 
     public void DoNext()
@@ -54,7 +65,7 @@ public class LevelMover : MonoBehaviour
         } 
         else
         {
-        SceneManager.UnloadSceneAsync(gameObject.scene.buildIndex);
+            SceneManager.UnloadSceneAsync(gameObject.scene.buildIndex);
         }
     }
 }

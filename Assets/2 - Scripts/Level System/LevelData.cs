@@ -11,12 +11,13 @@ public class LevelData : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        CollectBots();
+        TurnOffMotors(); 
         UpdateLevel(); 
     }
     public void UpdateLevel()
     {
         PlayerManager.instance.currentLevel = gameObject; 
-        bots.Clear();
         foreach (BotUIController panel in PlayerManager.instance.panels)
         {
             Destroy(panel.gameObject);
@@ -24,14 +25,35 @@ public class LevelData : MonoBehaviour
         }
         PlayerManager.instance.panels.Clear();
         PlayerManager.instance.worldCanvas.GetComponent<HorizontalLayoutGroup>().enabled = true; 
-        for (int i = 0; i < botParent.transform.childCount; i++)
-        {
-            bots.Add(botParent.transform.GetChild(i).gameObject.GetComponent<BotPlayer>()); 
-
-        }
+      
         PlayerManager.instance.bots = bots.ToArray();
         PlayerManager.instance.SetupBots(); 
 
+    }
+    void CollectBots()
+    {
+        bots.Clear();
+        for (int i = 0; i < botParent.transform.childCount; i++)
+        {
+            bots.Add(botParent.transform.GetChild(i).gameObject.GetComponent<BotPlayer>());
+
+        }
+    }
+    public void TurnOnMotors()
+    {
+        foreach (BotPlayer bot in bots)
+        {
+            bot.Character.Motor.SetTransientPosition(bot.Character.transform.position); 
+            bot.Character.Motor.enabled = true; 
+        }
+    }
+    //
+    public void TurnOffMotors()
+    {
+        foreach (BotPlayer bot in bots)
+        {
+            bot.Character.Motor.enabled = false;
+        }
     }
     // Update is called once per frame
     void Update()
