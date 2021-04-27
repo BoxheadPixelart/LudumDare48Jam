@@ -21,11 +21,11 @@ public class TwitchHookup : MonoBehaviour
 	public float _instructionTmr = 10f;
 	public int _instructionIndex = 0;
 	public string[] _instructions = { 
-		"TDOFOV -- To move bots type !Bot# Move [-9 to 9]",
-		"TDOFOV -- To rotate bots, type !Bot# Rotate [+-90, +-45, +-30, +-15, +-10]",
-		"TDOFOV -- To ping with a bot, type !Bot# Ping",
-		"TDOFOV -- To put a bot to sleep, type !Bot# Sleep",
-		"TDOFOV -- To wake up a sleeping bot, type !Bot# Awake"
+		"To move bots type !Bot# Move [-9 to 9]",
+		"To rotate bots, type !Bot# Rotate [+-90, +-45, +-30, +-15, +-10]",
+		"To ping with a bot, type !Bot# Ping",
+		"To put a bot to sleep, type !Bot# Sleep",
+		"To wake up a sleeping bot, type !Bot# Awake"
 	};
 
 	public void ConnectTwitch()

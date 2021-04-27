@@ -40,12 +40,18 @@ namespace KinematicCharacterController.Bot
         private void Start()
         {
             if (TwitchHookup.instance == null) return;
+            TwitchHookup.instance.OnMessageReceived -= _FilterMessage;
             TwitchHookup.instance.OnMessageReceived += _FilterMessage;
             _allCommandTypes = new List<BotCommand.Command>();
             foreach (int i in System.Enum.GetValues(typeof(BotCommand.Command)))
             {
                 _allCommandTypes.Add((BotCommand.Command)i);
             }
+        }
+
+        private void OnDestroy()
+        {
+            TwitchHookup.instance.OnMessageReceived -= _FilterMessage;
         }
 
         /// <summary>
