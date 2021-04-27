@@ -18,6 +18,15 @@ public class TwitchHookup : MonoBehaviour
 	UnityHttpListener _listen = null;
 	public delegate void MessageEvent(string msg);
 	public MessageEvent OnMessageReceived { get; set; } = null;
+	public float _instructionTmr = 10f;
+	public int _instructionIndex = 0;
+	public string[] _instructions = { 
+		"TDOFOV -- To move bots type !Bot# Move [-9 to 9]",
+		"TDOFOV -- To rotate bots, type !Bot# Rotate [+-90, +-45, +-30, +-15, +-10]",
+		"TDOFOV -- To ping with a bot, type !Bot# Ping",
+		"TDOFOV -- To put a bot to sleep, type !Bot# Sleep",
+		"TDOFOV -- To wake up a sleeping bot, type !Bot# Awake"
+	};
 
 	public void ConnectTwitch()
 	{
@@ -38,6 +47,18 @@ public class TwitchHookup : MonoBehaviour
 	private void Update()
     {
 		if (_irc.twitchDetails.oauth != "" && !_irc.enabled) _irc.enabled = true;
+		if (isConnected)
+        {
+			///	Send instructions every 20 seconds
+			_instructionTmr -= Time.deltaTime;
+			if (_instructionTmr <= 0f)
+            {
+				_instructionTmr = 20f;
+				_instructionIndex++;
+				_instructionIndex = (_instructionIndex >= _instructions.Length) ? 0 : _instructionIndex;
+				_irc.SendChatMessage(_instructions[_instructionIndex]);
+            }
+        }
 	}
 
 	private void _StateChange(TwitchIRC.StatusType _type, string _msg, int _perc) => isConnected = (_type == TwitchIRC.StatusType.Success);
@@ -52,7 +73,7 @@ public class TwitchHookup : MonoBehaviour
 			_listen.OnAuthReceivedEvent += _ConfigureIRC;
 			_listen.Start();
         }
-		Application.OpenURL("https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=7eebwhs11hheq8ilzp1r2uz69n8fv0&redirect_uri=http://localhost&scope=chat:read%20chat:edit%20channel:read:redemptions%20channel:read:subscriptions&force_verify=true");
+		Application.OpenURL("https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=7eebwhs11hheq8ilzp1r2uz69n8fv0&redirect_uri=http://localhost&scope=chat:read%20chat:edit&force_verify=true");
 	}
 
 	private void _ConfigureIRC()

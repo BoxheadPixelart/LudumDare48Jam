@@ -792,7 +792,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '[ GAME TITLE HERE ]'
+  m_text: The Depth of Field of View
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 30897cc2dd8f91749918163f6baefd41, type: 2}
   m_sharedMaterial: {fileID: 5727655844943600253, guid: 30897cc2dd8f91749918163f6baefd41, type: 2}
