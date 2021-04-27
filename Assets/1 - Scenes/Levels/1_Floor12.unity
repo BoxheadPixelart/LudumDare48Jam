@@ -684,7 +684,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh310748
+  m_Name: pb_Mesh249134
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -848,7 +848,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-475884
+  m_Name: pb_Mesh-1518026
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -859,8 +859,8 @@ Mesh:
     firstVertex: 0
     vertexCount: 24
     localAABB:
-      m_Center: {x: 0, y: 0, z: 0}
-      m_Extent: {x: 0, y: 0, z: 0}
+      m_Center: {x: 0.058291912, y: 0.21963, z: -0.062828064}
+      m_Extent: {x: 0.5582919, y: 0.030369997, z: 0.56282806}
   m_Shapes:
     vertices: []
     shapes: []
@@ -1135,19 +1135,19 @@ PrefabInstance:
       objectReference: {fileID: 342178763}
     - target: {fileID: 1414418372095185940, guid: c45053b0360b0444594e084bf2f93c05, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.051141147
+      value: 0.051141106
       objectReference: {fileID: 0}
     - target: {fileID: 1414418372095185940, guid: c45053b0360b0444594e084bf2f93c05, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.0039365455
+      value: 0.003936541
       objectReference: {fileID: 0}
     - target: {fileID: 1414418372095185940, guid: c45053b0360b0444594e084bf2f93c05, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.9957382
+      value: 0.99573815
       objectReference: {fileID: 0}
     - target: {fileID: 1414418372095185940, guid: c45053b0360b0444594e084bf2f93c05, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.07664608
+      value: -0.07664607
       objectReference: {fileID: 0}
     - target: {fileID: 3831550500556299246, guid: c45053b0360b0444594e084bf2f93c05, type: 3}
       propertyPath: m_Mesh
@@ -1159,19 +1159,19 @@ PrefabInstance:
       objectReference: {fileID: 701970438}
     - target: {fileID: 5853058398729913631, guid: c45053b0360b0444594e084bf2f93c05, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.051141147
+      value: 0.051141106
       objectReference: {fileID: 0}
     - target: {fileID: 5853058398729913631, guid: c45053b0360b0444594e084bf2f93c05, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.0039365455
+      value: 0.003936541
       objectReference: {fileID: 0}
     - target: {fileID: 5853058398729913631, guid: c45053b0360b0444594e084bf2f93c05, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.9957382
+      value: 0.99573815
       objectReference: {fileID: 0}
     - target: {fileID: 5853058398729913631, guid: c45053b0360b0444594e084bf2f93c05, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.07664608
+      value: -0.07664607
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c45053b0360b0444594e084bf2f93c05, type: 3}
@@ -2943,7 +2943,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh310656
+  m_Name: pb_Mesh249046
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3835,7 +3835,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-475870
+  m_Name: pb_Mesh-1518014
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3846,8 +3846,8 @@ Mesh:
     firstVertex: 0
     vertexCount: 56
     localAABB:
-      m_Center: {x: 0, y: 0, z: 0}
-      m_Extent: {x: 0, y: 0, z: 0}
+      m_Center: {x: 0, y: 0.05116868, z: 0}
+      m_Extent: {x: 0.75, y: 0.05116868, z: 0.75}
   m_Shapes:
     vertices: []
     shapes: []
@@ -4183,6 +4183,18 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 143154125}
+    - target: {fileID: 8425338542167506606, guid: f19a0210714b6b444a8f7344268349c5, type: 3}
+      propertyPath: m_SelectedEdges.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8425338542167506606, guid: f19a0210714b6b444a8f7344268349c5, type: 3}
+      propertyPath: m_SelectedFaces.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8425338542167506606, guid: f19a0210714b6b444a8f7344268349c5, type: 3}
+      propertyPath: m_SelectedVertices.Array.size
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 8425338542718733232, guid: f19a0210714b6b444a8f7344268349c5, type: 3}
       propertyPath: m_Mesh
       value: 

@@ -52,6 +52,7 @@ public class LevelData : MonoBehaviour
     {
         foreach (BotPlayer bot in bots)
         {
+            if (bot == null) continue; 
             bot.Character.Motor.enabled = false;
         }
     }

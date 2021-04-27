@@ -328,6 +328,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeColor: {r: 0.22553548, g: 0.9245283, b: 0.21368816, a: 1}
   inactiveColor: {r: 1, g: 1, b: 1, a: 1}
+  isEndPlate: 1
   _requiredSwitch: {fileID: 0}
   _rend: {fileID: 8425338542167506601}
 --- !u!1 &8425338542718733245
