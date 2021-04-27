@@ -22,6 +22,8 @@ namespace KinematicCharacterController.Bot
         public int zoneCount; 
         float rot;
         float rotCmdValue = 0;
+        int sleepCount = 0;
+        int wakeCount = 0;
         public LayerMask cameraLayer;
         public LayerMask worldLayer;
         public BotAI ai;
@@ -91,6 +93,7 @@ namespace KinematicCharacterController.Bot
             rot = lookTarget.transform.rotation.eulerAngles.y;
             ai.OnGoToSleep += () => { if (state == BotState.Auto) SetSleeping(); };
             ai.OnWakeUp += () => { if (state == BotState.Sleeping) SetAuto(); };
+            ai.player = this;
         }
 
         private void Update()
@@ -172,8 +175,24 @@ namespace KinematicCharacterController.Bot
                             .OnComplete(() => { ai.isCommandPinging = false; ai.isBusy = false; });
                         break;
                     case BotAI.BotCommand.Command.Sleep:
+                        ai.commands.Dequeue();
+                        sleepCount++;
+                        TwitchHookup.instance.irc.SendChatMessage($"{name} Sleep Status -- { sleepCount }/10");
+                        if (sleepCount >= 10)
+                        {
+                            sleepCount = 0; 
+                            ai.OnGoToSleep?.Invoke();
+                        }
+                        break;
                     case BotAI.BotCommand.Command.Awake:
                         ai.commands.Dequeue();
+                        wakeCount++;
+                        TwitchHookup.instance.irc.SendChatMessage($"{name} Awake Status -- { wakeCount }/10");
+                        if (wakeCount >= 10)
+                        {
+                            wakeCount = 0;
+                            ai.OnWakeUp?.Invoke();
+                        }
                         break;
                 }
             }

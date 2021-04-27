@@ -275,7 +275,7 @@ MonoBehaviour:
 
 '
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 06c15f508fb6f5f4991676741258f607, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 30897cc2dd8f91749918163f6baefd41, type: 2}
   m_sharedMaterial: {fileID: 1847282260496090884, guid: 06c15f508fb6f5f4991676741258f607, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -339,7 +339,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_renderer: {fileID: 3189896286841700708}
   m_maskType: 0
   _SortingLayer: 0

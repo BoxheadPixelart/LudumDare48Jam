@@ -14,13 +14,14 @@ public class TwitchHookup : MonoBehaviour
 
 	public static TwitchHookup instance { get; private set; } = null;
 	public bool isConnected { get; private set; } = false;
+	public TwitchIRC irc => _irc;
 	[SerializeField] private TwitchIRC _irc = null;
 	UnityHttpListener _listen = null;
 	public delegate void MessageEvent(string msg);
 	public MessageEvent OnMessageReceived { get; set; } = null;
 	public float _instructionTmr = 10f;
 	public int _instructionIndex = 0;
-	public string[] _instructions = { 
+	private string[] _instructions = { 
 		"To move bots type !Bot# Move [-9 to 9]",
 		"To rotate bots, type !Bot# Rotate [+-90, +-45, +-30, +-15, +-10]",
 		"To ping with a bot, type !Bot# Ping",

@@ -10,6 +10,7 @@ namespace KinematicCharacterController.Bot
 
         #region --------------------    Public Properties
 
+        public BotPlayer player { get; set; } = null;
         public NavMeshAgent agent => _agent;
         public Queue<BotCommand> commands => _commands;
         public bool isBusy { get; set; } = false;
@@ -29,8 +30,6 @@ namespace KinematicCharacterController.Bot
         [SerializeField] private NavMeshAgent _agent = null;
         [SerializeField] private int _commandLimit = 10;
         private Queue<BotCommand> _commands = new Queue<BotCommand>();
-        private int _wakeupCount = 0;
-        private int _sleepCount = 0;
         private List<BotCommand.Command> _allCommandTypes;
 
         #endregion
@@ -61,7 +60,7 @@ namespace KinematicCharacterController.Bot
         private void _FilterMessage(string _pMsg)
         {
             /// Split up the message and filter for a bot name
-            if (!_pMsg.StartsWith($"!{name.Replace(" ","")}")) return;
+            if (!_pMsg.ToUpper().StartsWith($"!{name.Replace(" ","").ToUpper()}")) return;
             List<string> _parts = new List<string>(_pMsg.Split(' '));
 
             /// Parse out the command
@@ -78,22 +77,10 @@ namespace KinematicCharacterController.Bot
                 (Mathf.Abs(_cmd.value) != 10 && Mathf.Abs(_cmd.value) != 15 && Mathf.Abs(_cmd.value) != 30 &&
                 Mathf.Abs(_cmd.value) != 45 && Mathf.Abs(_cmd.value) != 90 && Mathf.Abs(_cmd.value) != 180)) return;    //  Limit rotations
             if (_cmd.command == BotCommand.Command.Move) _cmd.value = (_cmd.value / Mathf.Abs(_cmd.value)) * Mathf.Min(Mathf.Abs(_cmd.value + 2), 11);   //  Limit movement from -9 to 9
-            _wakeupCount = (_cmd.command == BotCommand.Command.Awake) ? _wakeupCount + 1 : 0;
-            _sleepCount = (_cmd.command == BotCommand.Command.Sleep) ? _sleepCount + 1 : 0;
-            if (_wakeupCount == 10)
-            {
-                _wakeupCount = 0;
-                OnWakeUp?.Invoke();
-            }
-            if (_sleepCount == 10)
-            {
-                _sleepCount = 0;
-                OnGoToSleep?.Invoke();
-            }
 
             /// Queue-up the command
-            _commands.Enqueue(_cmd);
-            Debug.Log($"{name} queued up command: {_cmd.command.ToString()}!");
+            if (_commands.Count < _commandLimit) _commands.Enqueue(_cmd);
+            else TwitchHookup.instance.irc.SendChatMessage($"{name} ignored command, queue full.");
         }
 
         #endregion
