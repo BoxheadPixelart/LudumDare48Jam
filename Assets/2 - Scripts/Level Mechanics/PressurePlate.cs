@@ -9,7 +9,8 @@ public class PressurePlate : MonoBehaviour
 
     public enum PressurePlateState { Inactive, Idle, Pressed };
     public Color activeColor;
-    public Color inactiveColor; 
+    public Color inactiveColor;
+    public bool isEndPlate; 
     #endregion
 
     #region --------------------    Public Properties
@@ -47,6 +48,18 @@ public class PressurePlate : MonoBehaviour
         }
         Debug.DrawLine(transform.position + new Vector3(0f, _triggerRadius, 0f), transform.position + new Vector3(0f, _triggerRadius * 2f, 0f), Color.red, 10f);
         _rend.material.color = (state == PressurePlateState.Pressed) ? activeColor : ((state == PressurePlateState.Idle) ? inactiveColor : Color.grey);
+
+        if (isEndPlate)
+        {
+            if (state == PressurePlateState.Pressed)
+            {
+                foreach (var bot in PlayerManager.instance.bots)
+                {
+                    bot.SetSleeping(); 
+                }
+                //PlayerManager.instance.bots 
+            }
+        }
     }
 
     #endregion

@@ -22,6 +22,7 @@ public class CameraGroup : MonoBehaviour
     {
         foreach (CinemachineBrain brain in brains)
         {
+            if (brain == null) { continue; }
             brain.enabled = false; 
         }
     }

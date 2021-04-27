@@ -33,18 +33,18 @@ public class LevelMover : MonoBehaviour
    
         if (skip)
         {
-            transform.DOMoveY(0, 2).SetEase(Ease.Linear).OnComplete(() => { SetLevelUpper(); PlayerManager.instance.levelManager.LoadNextScene(); }); ;
+            transform.DOMoveY(0, 2).SetEase(Ease.Linear).OnComplete(() => { SetLevelUpper(); PlayerManager.instance.levelManager?.LoadNextScene(); }); ;
         } else
         {
-            transform.DOMoveY(0, 2).SetEase(Ease.Linear).OnComplete(() => {levelData.TurnOnMotors(); });
+            transform.DOMoveY(0, 2).SetEase(Ease.Linear).OnComplete(() => {levelData?.TurnOnMotors(); });
         }
       
     }
     public void SetLevelUpper()
     {
-        
-        cameras.TurnOffBrains();
-        levelData.TurnOffMotors(); 
+
+        cameras?.TurnOffBrains();
+        levelData?.TurnOffMotors(); 
         if (skip)
         {
             transform.DOMoveY(7, 2).SetEase(Ease.Linear).OnComplete(() => { DoNext(); });

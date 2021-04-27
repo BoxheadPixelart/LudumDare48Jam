@@ -16,7 +16,7 @@ EditorBuildSettings:
     guid: d9922c3e859920b4dbd24762d65e5041
   - enabled: 1
     path: Assets/1 - Scenes/Levels/2_Floor11.unity
-    guid: 5ad510f25790b9548a496fc28869f9f8
+    guid: 9dd3dbfcc51b3b34ea75f7a9a991b79a
   - enabled: 1
     path: Assets/1 - Scenes/Levels/3_Floor10.unity
     guid: 6d2f7b5359e461e41bf9736576478c5c
@@ -50,36 +50,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/1 - Scenes/Levels/13_Basement1.unity
     guid: 452888874f55a9043bb85958219b4a08
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
-  - enabled: 0
-    path: Assets/1 - Scenes/Levels/12_Lobby.unity
-    guid: 9339dc94fd2bde14ab96f8bffaa3f23e
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/1 - Scenes/Levels/14_Basement2.unity
     guid: 1ecf146948cd2ea438714e3955f2d393
