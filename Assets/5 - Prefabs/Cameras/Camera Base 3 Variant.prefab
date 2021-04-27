@@ -9,7 +9,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1414418370099105712, guid: c45053b0360b0444594e084bf2f93c05, type: 3}
       propertyPath: m_Name
-      value: Camera Base 3
+      value: Camera Base 3 Variant
       objectReference: {fileID: 0}
     - target: {fileID: 1414418370099105712, guid: c45053b0360b0444594e084bf2f93c05, type: 3}
       propertyPath: m_Layer

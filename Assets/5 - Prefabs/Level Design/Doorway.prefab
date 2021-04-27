@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1401512755919324736}
   - component: {fileID: 1401512755919324737}
   - component: {fileID: 1401512755919324750}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: DoorMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -460,7 +460,7 @@ GameObject:
   - component: {fileID: 1401512756983903566}
   - component: {fileID: 1401512756983903567}
   - component: {fileID: 1401512756983903564}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Plate Base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1015,7 +1015,7 @@ GameObject:
   - component: {fileID: 1401512757195411478}
   - component: {fileID: 1401512757195411479}
   - component: {fileID: 1401512757195411467}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Plate
   m_TagString: Untagged
   m_Icon: {fileID: 0}

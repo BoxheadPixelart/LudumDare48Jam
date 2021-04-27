@@ -119,8 +119,8 @@ namespace KinematicCharacterController.Bot
 
         private void _Rotate()
         {
-            if (state == BotState.Manual && Input.GetKey(KeyCode.A)) rot -= 2;
-            if (state == BotState.Manual && Input.GetKey(KeyCode.D)) rot += 2;
+            if (state == BotState.Manual && Input.GetKey(KeyCode.A)) rot -= 3;
+            if (state == BotState.Manual && Input.GetKey(KeyCode.D)) rot += 3;
             lookTarget.transform.rotation = Quaternion.Euler(lookTarget.transform.rotation.eulerAngles.x, rot, lookTarget.transform.rotation.eulerAngles.z);
         }
 
