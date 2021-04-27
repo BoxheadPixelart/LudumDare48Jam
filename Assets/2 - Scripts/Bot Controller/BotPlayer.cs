@@ -4,6 +4,7 @@ using UnityEngine;
 using KinematicCharacterController;
 using KinematicCharacterController.Examples;
 using DG.Tweening;
+using UnityEngine.AI;
 
 namespace KinematicCharacterController.Bot
 {
@@ -13,35 +14,48 @@ namespace KinematicCharacterController.Bot
     {
         public BotCharacterController Character;
         // public BotCharacterCamera CharacterCamera;
-        public GameObject lookTarget; 
+        public GameObject lookTarget;
         private const string MouseXInput = "Mouse X";
         private const string MouseYInput = "Mouse Y";
         private const string MouseScrollInput = "Mouse ScrollWheel";
         private const string HorizontalInput = "Horizontal";
         private const string VerticalInput = "Vertical";
-        public int zoneCount; 
+        PlayerCharacterInputs characterInputs = new PlayerCharacterInputs();
         float rot;
-        float rotCmdValue = 0;
-        int sleepCount = 0;
-        int wakeCount = 0;
+        public List<CameraBrain> cameras = new List<CameraBrain>();
         public LayerMask cameraLayer;
         public LayerMask worldLayer;
-        public BotAI ai;
+        public int zoneCount;
+        public bool canPing => zoneCount > 0;
+
         public BotState state = BotState.Auto;
         public delegate void StateChange(BotState _pState);
         public StateChange OnStateChange { get; set; } = null;
-        private float _aiTimer = 0;
-        PlayerCharacterInputs characterInputs = new PlayerCharacterInputs();
+
+        public Queue<TwitchCommandModule.Command> queuedCommands = new Queue<TwitchCommandModule.Command>();
+        public int queuedCommandLimit => 10;
+        public bool isProcessingCommand = false;
+        public float cmdCooldown => 1f;
+        public TwitchCommandModule.Command currentCommand;
+        public NavMeshAgent agent { get; private set; } = null;
+        public bool isMoving = false;
+        public bool isRotating = false;
+        float rotCmdValue = 0;
+        int sleepCount = 0;
+        int wakeCount = 0;
+        int stateChangeCommandCount => 1;
+        private float _cmdTimer = 0;
         private float navmeshCheckInterval = 1f;
 
-        public List<CameraBrain> cameras = new List<CameraBrain>();
-        public bool canPing => zoneCount > 0;
 
         public void SetSleeping()
         {
             if (state == BotState.Sleeping) return;
             PlayerManager.instance.manualBot = (PlayerManager.instance.manualBot == this) ? null : PlayerManager.instance.manualBot;
             state = BotState.Sleeping;
+            _ResetAgent();
+            sleepCount = 0;
+            wakeCount = 0;
             characterInputs = new PlayerCharacterInputs();
             Character.SetInputs(ref characterInputs);
             OnStateChange?.Invoke(state);
@@ -52,6 +66,9 @@ namespace KinematicCharacterController.Bot
             if (state == BotState.Auto) return;
             PlayerManager.instance.manualBot = (PlayerManager.instance.manualBot == this) ? null : PlayerManager.instance.manualBot;
             state = BotState.Auto;
+            _ResetAgent();
+            sleepCount = 0;
+            wakeCount = 0;
             characterInputs = new PlayerCharacterInputs();
             Character.SetInputs(ref characterInputs);
             OnStateChange?.Invoke(state);
@@ -62,14 +79,44 @@ namespace KinematicCharacterController.Bot
             if (state == BotState.Manual) return;
             PlayerManager.instance.manualBot?.SetSleeping();
             state = BotState.Manual;
+            wakeCount = 0;
             PlayerManager.instance.manualBot = this;
             characterInputs = new PlayerCharacterInputs();
             Character.SetInputs(ref characterInputs);
             OnStateChange?.Invoke(state);
         }
 
-        public void PingCameras()
+        /// <summary>
+        /// Sets the ai's destination to the distance forwards or backwards
+        /// </summary>
+        /// <param name="_pDistance"></param>
+        /// <returns></returns>
+        public bool SetAIMove(int _pDistance)
         {
+            if (state != BotState.Auto) return false;
+            agent.transform.position = Character.transform.position;
+            agent.SetDestination(Character.transform.position + (Character.transform.forward * _pDistance));
+            isMoving = true;
+            return true;
+        }
+
+        /// <summary>
+        /// Sets the bot to rotating
+        /// </summary>
+        /// <param name="_pValue"></param>
+        /// <returns></returns>
+        public bool SetAIRotate(int _pValue)
+        {
+            if (state != BotState.Auto) return false;
+            _ResetAgent();
+            rotCmdValue = currentCommand.value;
+            isRotating = true;
+            return true;
+        }
+
+        public bool PingCameras()
+        {
+            if (state == BotState.Sleeping) return false;
             if (canPing)
             {
                 foreach (CameraBrain cam in cameras)
@@ -77,45 +124,69 @@ namespace KinematicCharacterController.Bot
                     cam.ToggleTarget(Character.transform);
                 }
             }
+            return true;
         }
-        
-        public void ZoomCamera()
+
+        public bool ZoomCamera()
         {
+            if (state == BotState.Sleeping) return false;
             foreach (CameraBrain cam in cameras)
             {
                 cam.ToggleZoom();
             }
+            return true;
+        }
+
+        /// <summary>
+        /// Increases the sleep command count and puts the bot to sleep if the threshold is reached
+        /// </summary>
+        /// <returns></returns>
+        public bool IncreaseSleep()
+        {
+            if (state == BotState.Sleeping) return false;
+            sleepCount++;
+            if (sleepCount >= stateChangeCommandCount)
+            {
+                SetSleeping();
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Increases the awake command count and wakes the bot up if the threshold is reached
+        /// </summary>
+        /// <returns></returns>
+        public bool IncreaseAwake()
+        {
+            if (state != BotState.Sleeping) return false;
+            wakeCount++;
+            if (wakeCount >= stateChangeCommandCount)
+            {
+                SetAuto();
+            }
+            return true;
+        }
+
+        private void Awake()
+        {
+            agent = GetComponentInChildren<NavMeshAgent>();
         }
 
         private void Start()
         {
             SetSleeping();
             rot = lookTarget.transform.rotation.eulerAngles.y;
-            ai.OnGoToSleep += () => { if (state == BotState.Auto) SetSleeping(); };
-            ai.OnWakeUp += () => { if (state == BotState.Sleeping) SetAuto(); };
-            ai.player = this;
+            TwitchHookup.instance.irc.newChatMessageEvent.RemoveListener(_ScanMessage);
+            TwitchHookup.instance.irc.newChatMessageEvent.AddListener(_ScanMessage);
         }
+
+        private void OnDestroy() => TwitchHookup.instance.irc.newChatMessageEvent.RemoveListener(_ScanMessage);
 
         private void Update()
         {
-            switch (state)
-            {
-                case BotState.Sleeping:
-                    ai.agent.transform.position = Character.transform.position;
-                    break;
-                case BotState.Auto:
-                    _UpdateAITarget();
-                    ai.isBusy = ai.agent.remainingDistance > ai.agent.stoppingDistance + 0.5f;
-                    if (ai.isCommandMoving && !ai.isBusy)
-                    {
-                        ai.isCommandMoving = false;
-                        ai.commands.Dequeue();
-                    }
-                    break;
-                case BotState.Manual:
-                    _HandleCharacterInput();
-                    break;
-            }
+            _ProcessCommandQueue();
+            _FollowAgent();
+            _HandleCharacterInput();
         }
 
         private void LateUpdate() => _Rotate();
@@ -129,95 +200,83 @@ namespace KinematicCharacterController.Bot
 
         private void _HandleCharacterInput()
         {
+            if (state != BotState.Manual) return;
             characterInputs = new PlayerCharacterInputs();
 
             // Build the CharacterInputs struct
             characterInputs.MoveAxisForward = Input.GetAxisRaw(VerticalInput);
-            characterInputs.MoveAxisRight = 0f; 
+            characterInputs.MoveAxisRight = 0f;
             characterInputs.CameraRotation = lookTarget.transform.rotation;
             characterInputs.JumpDown = false;
             characterInputs.CrouchDown = false;
             characterInputs.CrouchUp = false;
 
             // Apply inputs to character
-            Character.SetInputs(ref characterInputs);
-            ai.agent.transform.position = Character.transform.position;
-            ai.agent.SetDestination(ai.agent.transform.position);
+            Character.SetInputs(ref characterInputs); 
+            _ResetAgent();
         }
 
-        private void _UpdateAITarget()
+        /// <summary>
+        /// Scans a message and creates a command to queue if possible
+        /// </summary>
+        /// <param name="_pChatter"></param>
+        private void _ScanMessage(Chatter _pChatter)
         {
-            if (ai.commands.Count == 0 && PlayerManager.instance.manualBot != null) ai.agent.SetDestination(PlayerManager.instance.manualBot.Character.transform.position);
-            if (ai.commands.Count > 0 && !ai.isBusy)
-            {
-                ai.isBusy = true;
-                BotAI.BotCommand _cmd = ai.commands.Peek();
-                switch(_cmd.command)
-                {
-                    case BotAI.BotCommand.Command.Rotate:
-                        if (ai.isCommandRotating) break;
-                        rotCmdValue = _cmd.value;
-                        ai.isCommandRotating = true;
-                        DOTween.To(() => _aiTimer, x => _aiTimer = x, 1f, 1f)
-                            .OnComplete(() => { ai.commands.Dequeue(); ai.isCommandRotating = false; ai.isBusy = false; });
-                        break;
-                    case BotAI.BotCommand.Command.Move:
-                        if (ai.isCommandMoving) break;
-                        ai.agent.SetDestination(Character.transform.position + (Character.transform.forward * _cmd.value));
-                        ai.isCommandMoving = true;
-                        break;
-                    case BotAI.BotCommand.Command.Ping:
-                        if (ai.isCommandPinging) break;
-                        PingCameras();
-                        ai.isCommandPinging = false;
-                        ai.commands.Dequeue();
-                        DOTween.To(() => _aiTimer, x => _aiTimer = x, 1f, 1f)
-                            .OnComplete(() => { ai.isCommandPinging = false; ai.isBusy = false; });
-                        break;
-                    case BotAI.BotCommand.Command.Sleep:
-                        ai.commands.Dequeue();
-                        sleepCount++;
-                        TwitchHookup.instance.irc.SendChatMessage($"{name} Sleep Status -- { sleepCount }/10");
-                        if (sleepCount >= 10)
-                        {
-                            sleepCount = 0; 
-                            ai.OnGoToSleep?.Invoke();
-                        }
-                        break;
-                    case BotAI.BotCommand.Command.Awake:
-                        ai.commands.Dequeue();
-                        wakeCount++;
-                        TwitchHookup.instance.irc.SendChatMessage($"{name} Awake Status -- { wakeCount }/10");
-                        if (wakeCount >= 10)
-                        {
-                            wakeCount = 0;
-                            ai.OnWakeUp?.Invoke();
-                        }
-                        break;
-                }
-            }
-            FollowAgent();
+            TwitchCommandModule.CommandDefinition _def = TwitchCommandModule.commandDefinitions.Find(d => d.MatchesPattern(name, _pChatter.message));
+            if (_def == null || queuedCommands.Count >= queuedCommandLimit) return;
+            /// Create a command and queue it
+            queuedCommands.Enqueue(new TwitchCommandModule.Command() { name = _def.name, value = _def.value });
+            Debug.Log($"Queued command name: {_def.name}, value: {_def.value}... {queuedCommands.Count} commands remain...");
+        }
 
-            /// Follow AI Agent
-            void FollowAgent()
+        /// <summary>
+        /// Processes the top command in the queue
+        /// </summary>
+        private void _ProcessCommandQueue()
+        {
+            if (queuedCommands.Count == 0 || isProcessingCommand || isMoving || isRotating) return;
+            isProcessingCommand = true;
+            currentCommand = queuedCommands.Dequeue();
+            Debug.Log($"Processing command: name - {currentCommand.name}, value - {currentCommand.value}");
+            if (TwitchCommandModule.commandActions[currentCommand.name] != null && TwitchCommandModule.commandActions[currentCommand.name].Invoke(currentCommand, this))
             {
-                if (navmeshCheckInterval <= 0)
-                {
-                    navmeshCheckInterval = 1f;
-                    if (Vector3.Distance(Character.transform.position, ai.agent.transform.position) > 3f) ai.agent.transform.position = Character.transform.position;
-                }
-                navmeshCheckInterval -= Time.deltaTime;
-                Vector3 _cachedAngles = lookTarget.transform.rotation.eulerAngles;
-                float _angles = (ai.isBusy) ? Quaternion.FromToRotation(lookTarget.transform.forward, (ai.agent.transform.position - Character.transform.position).normalized).eulerAngles.y - 180f : 0f;
-                rot += (!ai.isCommandRotating) ? ((_angles > -10f && _angles < 10f) ? 0f : ((_angles >= 10f) ? -2f : 2f)) : rotCmdValue * Time.deltaTime;
-                characterInputs = new PlayerCharacterInputs()
-                {
-                    MoveAxisForward = (Vector3.Distance(ai.agent.transform.position, Character.transform.position) > ai.agent.stoppingDistance) ? 0.95f : 0f,
-                    CameraRotation = lookTarget.transform.rotation
-                };
-                Character.SetInputs(ref characterInputs);
+                DOTween.To(() => _cmdTimer, x => _cmdTimer = x, cmdCooldown, cmdCooldown)
+                    .OnComplete(() => { 
+                        isProcessingCommand = false;
+                        isRotating = false;
+                        Debug.Log($"Command Done: name - {currentCommand.name}, value - {currentCommand.value}... {queuedCommands.Count} commands remain...");
+                    });
+            }
+            else
+            {
+                isProcessingCommand = false;
             }
         }
 
+        private void _ResetAgent() { agent.transform.position = Character.transform.position; agent.SetDestination(Character.transform.position);}
+
+        /// Follow AI Agent
+        private void _FollowAgent()
+        {
+            if (state != BotState.Auto) return;
+            if (navmeshCheckInterval <= 0)
+            {
+                navmeshCheckInterval = 1f;
+                if (Vector3.Distance(Character.transform.position, agent.transform.position) > 3f) agent.transform.position = Character.transform.position;
+            }
+            navmeshCheckInterval -= Time.deltaTime;
+            Vector3 _cachedAngles = lookTarget.transform.rotation.eulerAngles;
+            float _angles = (isProcessingCommand) ?
+                Quaternion.FromToRotation(lookTarget.transform.forward, (agent.transform.position - Character.transform.position).normalized).eulerAngles.y - 180f
+                : 0f;
+            rot += (!isRotating) ? ((_angles > -10f && _angles < 10f) ? 0f : ((_angles >= 10f) ? -2f : 2f)) : rotCmdValue * Time.deltaTime;
+            characterInputs = new PlayerCharacterInputs()
+            {
+                MoveAxisForward = (Vector3.Distance(agent.transform.position, Character.transform.position) > agent.stoppingDistance) ? 0.95f : 0f,
+                CameraRotation = lookTarget.transform.rotation
+            };
+            Character.SetInputs(ref characterInputs);
+            isMoving = (isMoving) ? agent.remainingDistance > agent.stoppingDistance + 1f : false;
+        }
     }
 }

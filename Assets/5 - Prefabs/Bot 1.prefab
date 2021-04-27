@@ -2132,7 +2132,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4948179390843459438}
   - component: {fileID: 4948179390843459437}
-  - component: {fileID: 636927977311643030}
   m_Layer: 0
   m_Name: Bot 1
   m_TagString: Bot
@@ -2178,20 +2177,6 @@ MonoBehaviour:
   worldLayer:
     serializedVersion: 2
     m_Bits: 65536
-  ai: {fileID: 636927977311643030}
+  ai: {fileID: 0}
   state: 0
   cameras: []
---- !u!114 &636927977311643030
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4948179390843459439}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f308956861800674089fbd91ce51131e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _agent: {fileID: 1835334220049016653}
-  _commandLimit: 10

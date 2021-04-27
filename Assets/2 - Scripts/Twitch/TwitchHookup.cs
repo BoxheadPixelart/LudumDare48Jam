@@ -19,14 +19,14 @@ public class TwitchHookup : MonoBehaviour
 	UnityHttpListener _listen = null;
 	public delegate void MessageEvent(string msg);
 	public MessageEvent OnMessageReceived { get; set; } = null;
-	public float _instructionTmr = 10f;
+	private float _instructionTmr = 5f;
 	public int _instructionIndex = 0;
 	private string[] _instructions = { 
+		"To wake up a sleeping bot, type !Bot# Awake",
 		"To move bots type !Bot# Move [-9 to 9]",
 		"To rotate bots, type !Bot# Rotate [+-90, +-45, +-30, +-15, +-10]",
 		"To ping with a bot, type !Bot# Ping",
-		"To put a bot to sleep, type !Bot# Sleep",
-		"To wake up a sleeping bot, type !Bot# Awake"
+		"To put a bot to sleep, type !Bot# Sleep"
 	};
 
 	public void ConnectTwitch()
@@ -40,6 +40,7 @@ public class TwitchHookup : MonoBehaviour
 
 	private void Start()
 	{
+		KinematicCharacterController.Bot.TwitchCommandModule.Initialize();
 		_irc.statusEvent.RemoveListener(_StateChange);
 		_irc.statusEvent.AddListener(_StateChange);
 		DontDestroyOnLoad(gameObject);
