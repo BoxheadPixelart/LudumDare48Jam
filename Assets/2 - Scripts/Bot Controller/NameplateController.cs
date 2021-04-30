@@ -22,14 +22,12 @@ public class NameplateController : MonoBehaviour
       //  cameras = FindObjectsOfType(typeof(CinemachineVirtualCamera)) as CinemachineVirtualCamera[];
         //create a nameplate per camera
         for (int i = 0; i <= cameraGroup.cams.Length -1; i++)
-        {
-            
+        {       
             GameObject name = Instantiate(nameplatePrefab, transform);
             nameplates.Add(name);
             name.transform.GetChild(0).GetComponent<TMP_Text>().text = bot.name;
             name.layer = cameraGroup.cams[i].gameObject.layer; 
             name.transform.GetChild(0).gameObject.layer = cameraGroup.cams[i].gameObject.layer;
-            print(layers[i]); 
         }
     }
 
@@ -40,8 +38,6 @@ public class NameplateController : MonoBehaviour
 
         for (int i = 0; i <= cameraGroup.cams.Length - 1; i++)
         {
-            print(nameplates[i].transform);
-            print(cameraGroup.cams.Length); 
             nameplates[i].transform.LookAt(cameraGroup.cams[i].transform); 
         }
     }

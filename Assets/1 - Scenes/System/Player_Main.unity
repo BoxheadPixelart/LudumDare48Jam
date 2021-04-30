@@ -6786,6 +6786,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5760893426719396139, guid: 49ec24750ade7d943abd7f25e4cb8972, type: 3}
+      propertyPath: far clip plane
+      value: 46
+      objectReference: {fileID: 0}
+    - target: {fileID: 5760893426719396139, guid: 49ec24750ade7d943abd7f25e4cb8972, type: 3}
       propertyPath: m_RenderingPath
       value: 1
       objectReference: {fileID: 0}
@@ -6807,7 +6811,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9029876654019891802, guid: 49ec24750ade7d943abd7f25e4cb8972, type: 3}
       propertyPath: m_Antialiasing
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9029876654019891802, guid: 49ec24750ade7d943abd7f25e4cb8972, type: 3}
       propertyPath: m_RendererIndex

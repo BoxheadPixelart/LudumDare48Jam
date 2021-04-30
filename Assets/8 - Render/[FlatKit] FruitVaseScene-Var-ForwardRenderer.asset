@@ -64,9 +64,7 @@ MonoBehaviour:
   m_RendererFeatures:
   - {fileID: -6088551604455195741}
   - {fileID: -2401278517541482506}
-  - {fileID: 5917692140061186374}
-  - {fileID: -1286200264545723870}
-  m_RendererFeatureMap: a33bd003931e81abf6cf292be9f1acde46d977eaa5dd1f52221abd89ac7f26ee
+  m_RendererFeatureMap: a33bd003931e81abf6cf292be9f1acde
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
   shaders:
@@ -92,7 +90,7 @@ MonoBehaviour:
     passOperation: 0
     failOperation: 0
     zFailOperation: 0
-  m_ShadowTransparentReceive: 1
+  m_ShadowTransparentReceive: 0
   m_RenderingMode: 0
   m_AccurateGbufferNormals: 0
 --- !u!114 &5917692140061186374
